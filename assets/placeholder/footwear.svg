@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <!-- Placeholder Footwear layer (sneakers). -->
+  <g stroke="#2b2622" stroke-width="3" stroke-linejoin="round">
+    <path d="M62 276 Q62 260 80 258 L94 258 Q98 262 98 276 Z" fill="#ffffff"/>
+    <path d="M138 276 Q138 260 120 258 L106 258 Q102 262 102 276 Z" fill="#ffffff"/>
+    <path d="M62 272 H98 M102 272 H138" stroke="#e4572e" stroke-width="4"/>
+  </g>
+</svg>

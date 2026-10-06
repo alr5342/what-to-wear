@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
+  <!-- Placeholder Bottom layer (jeans). -->
+  <g stroke-linecap="round" fill="none">
+    <path d="M88 180 L86 256 M112 180 L114 256" stroke="#2b2622" stroke-width="28"/>
+    <path d="M88 180 L86 256 M112 180 L114 256" stroke="#3d5a80" stroke-width="22"/>
+  </g>
+  <rect x="68" y="168" width="64" height="26" rx="10" fill="#3d5a80" stroke="#2b2622" stroke-width="3"/>
+  <path d="M100 176 V196" stroke="#2b2622" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

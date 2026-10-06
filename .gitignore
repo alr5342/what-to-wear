@@ -1,0 +1,17 @@
+# OS / editor clutter
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+*.swp
+
+# Local env files (never commit secrets)
+.env
+.env.*
+
+# Node tooling, if ever used locally (the app itself has no build step)
+node_modules/
+npm-debug.log*
+
+# Raw / working art files — commit only the final exported assets
+assets/_raw/
