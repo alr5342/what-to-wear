@@ -92,7 +92,7 @@ Three options were compared:
 2. **Adobe Firefly** — Outputs from non-beta features are usable commercially. Trained on licensed Adobe Stock content and public-domain material rather than broadly scraped web images, which lowers (but doesn't eliminate) the risk of an output resembling someone else's copyrighted work. Full IP indemnification is enterprise-only.
 3. **Leonardo.Ai** — Free tier grants a non-exclusive, royalty-free commercial-use license, but Leonardo retains ownership and free-tier generations are public, meaning the exact character art could be seen or remixed by other users. A paid tier grants full ownership/private generation.
 
-**Decision:** Use ChatGPT's image generation to produce the artwork. Checked: the official OpenAI "ChatGPT" VS Code extension is a coding agent (chat sidebar, file edits, terminal commands) with no confirmed image-generation capability of its own — so images will be generated in the ChatGPT web/mobile app directly, downloaded as PNGs, and added to the project manually (no automated save-to-repo pipeline exists either way). To keep the character consistent across roughly 25 assets, a single master character design will be created first and reused as the visual reference for every subsequent outfit/icon generation, reducing the risk of the character's face, body, or style drifting between separate generations. The info screen will credit "character and outfit art generated with OpenAI's ChatGPT image tools."
+**Decision:** Use ChatGPT's image generation to produce the artwork. Checked: the official OpenAI "ChatGPT" VS Code extension is a coding agent (chat sidebar, file edits, terminal commands) with no confirmed image-generation capability of its own — so images will be generated in the ChatGPT web/mobile app directly, downloaded as PNGs, and added to the project manually (no automated save-to-repo pipeline exists either way). To keep the character consistent across the planned asset set (current estimate in `spec.md` → Assets), a single master character design will be created first and reused as the visual reference for every subsequent outfit/icon generation, reducing the risk of the character's face, body, or style drifting between separate generations. The info screen will credit "character and outfit art generated with OpenAI's ChatGPT image tools."
 
 ## Decisions
 
@@ -108,7 +108,7 @@ Three options were compared:
 - **Deployment:** GitHub Pages, as recommended in the brief.
 - **Screen structure (high-level only):** Two screens at minimum — a Main screen (character, recommendation, location/date controls, weather icon, reminders, and a share action for the outfit card) and an Info/credits screen reachable from it. Exact layout, hierarchy, and any additional screens are defined from the hand-drawn phone/laptop designs in the spec phase, not here.
 
-**Art estimate:** 1 base character + 5 categories × 3 outfit variations each (15 pieces) + weather condition icons (estimate 5–6: sunny, cloudy, rain, snow, storm/wind) + 4 reminder icons (umbrella, sun protection, hydration, cold) ≈ **25 assets**. This volume is the main reason AI-generated artwork is preferred over hand-drawing everything within the project timeline.
+**Art estimate:** The Phase 1 estimate of ~25 assets is superseded by the Developer's weather-matched clothing decision on 2026-10-12. See [spec.md → Assets](spec.md#assets) for the current count and pool breakdown. The expanded artwork volume continues to support the choice of AI-generated artwork within the project timeline.
 
 ## Revisions
 
@@ -116,6 +116,7 @@ Record new evidence or changed decisions and explain why they changed.
 
 - **2026-10-04 (planning phase):** Added the US Census Bureau Geocoding Services API as the geocoding provider for typed city/zip entry. This was a missing dependency not caught during research/spec — NWS requires lat/lon and has no geocoding of its own. Chosen over OpenStreetMap Nominatim and Zippopotam.us for consistency with NWS's free/no-key/US-government profile and because it handles both city names and zips (Zippopotam.us is zip-only).
 - **2026-10-05 (build, Checkpoint 1):** The Developer refined the visual direction. The original "simple cartoon/mascot style" is replaced by a character that is substantially more polished, professional, distinctive, and nuanced than a generic cartoon figure, while staying playful for the audience. The Developer is developing the seed character separately before the real art is wired in. The placeholder SVGs in `assets/placeholder/` are layout stand-ins only, not the visual target.
+- **2026-10-12 (build handoff):** Replaced the outdated art estimate with a reference to the current asset budget in `spec.md`, following the Developer's choice of weather-matched clothing pools. The specification owns the pool rules and current asset count.
 
 ## Approval
 

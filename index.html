@@ -54,19 +54,15 @@
   <!-- ===== Main screen ===== -->
   <div id="main-screen" class="app">
     <header class="topbar">
-      <button id="location-btn" class="ghost-btn topbar-loc" type="button" aria-haspopup="dialog">
+      <div class="topbar-loc">
         <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
-        <span class="sr-only">Change location. Current location:</span>
+        <span class="sr-only">Selected location:</span>
         <span id="location-name">Set your location</span>
-        <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-      </button>
+      </div>
 
       <div class="topbar-date">
-        <button id="date-btn" class="ghost-btn" type="button" aria-haspopup="dialog">
-          <span class="sr-only">Change date. Selected:</span>
-          <span id="date-label">Today</span>
-          <svg class="icon icon-sm" aria-hidden="true"><use href="#i-chevron-down"/></svg>
-        </button>
+        <span class="sr-only">Selected date:</span>
+        <span id="date-label">Today</span>
         <span id="period-label" class="badge" hidden>Current</span>
       </div>
 
@@ -92,7 +88,7 @@
             <span id="condition-icon" class="condition-icon"></span>
             <div>
               <p class="temp"><span id="temp"></span> <span id="feels" class="feels"></span></p>
-              <p class="condition-meta"><span id="condition-label"></span> · Source: <abbr title="National Weather Service">NWS</abbr></p>
+              <p class="condition-meta"><span id="condition-label"></span> · <span id="weather-source">Mock forecast</span></p>
             </div>
           </div>
 
@@ -107,9 +103,9 @@
           </section>
 
           <div class="actions">
-            <!-- Phone only: thumb-reachable way to change location/date (spec #18). -->
-            <button id="change-btn" class="btn btn-secondary phone-only" type="button" aria-haspopup="dialog" aria-label="Change location or date">
-              <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg> Change
+            <!-- One shared selector control; thumb-reachable on phone (spec #18). -->
+            <button id="change-btn" class="btn btn-secondary" type="button" aria-haspopup="dialog" aria-controls="selector" aria-label="Change location and date">
+              Location &amp; date
             </button>
             <button id="share-btn" class="btn btn-primary" type="button" aria-haspopup="dialog">
               <svg class="icon" aria-hidden="true"><use href="#i-share"/></svg> Share

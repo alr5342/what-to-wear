@@ -119,20 +119,6 @@ button { cursor: pointer; }
 .btn-secondary { background: var(--card-solid); color: var(--ink); }
 .btn-block     { width: 100%; }
 
-.ghost-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  padding: 0 10px;
-  margin-left: -10px;
-  border: 0;
-  border-radius: 12px;
-  background: transparent;
-  font-weight: 800;
-}
-.ghost-btn:hover { background: rgba(255, 255, 255, 0.55); }
-
 .icon-btn {
   display: inline-grid;
   place-items: center;
@@ -174,7 +160,7 @@ button { cursor: pointer; }
   padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
 }
 
-/* Phone top bar: location + info on row 1, date on row 2 (per drawings). */
+/* Read-only summary; the single Location & date control sits beside Share. */
 .topbar {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -184,7 +170,15 @@ button { cursor: pointer; }
   align-items: center;
   padding: 6px 16px 0;
 }
-.topbar-loc  { grid-area: loc; justify-self: start; min-width: 0; font-size: 1.15rem; }
+.topbar-loc {
+  grid-area: loc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
 .topbar-loc #location-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .topbar-info { grid-area: info; margin-right: -10px; }
 .topbar-date {
@@ -192,6 +186,8 @@ button { cursor: pointer; }
   display: flex;
   align-items: center;
   gap: 10px;
+  min-height: 44px;
+  font-weight: 800;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -254,7 +250,7 @@ button { cursor: pointer; }
   height: min(100cqh, 360px);
   aspect-ratio: 2 / 3;
 }
-.character img {
+.character .layer {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -265,7 +261,7 @@ button { cursor: pointer; }
 }
 
 /* Every non-loaded view shows a silhouette of the base character only. */
-.main:not([data-view="loaded"]) .character img:not(.layer-base) { display: none; }
+.main:not([data-view="loaded"]) .character .layer:not(.layer-base) { display: none; }
 .main:not([data-view="loaded"]) .character img.layer-base {
   filter: brightness(0);
   opacity: 0.13;
@@ -711,6 +707,8 @@ dialog.sheet::backdrop { background: rgba(20, 24, 34, 0.45); }
   color: #fff;
   font: 12px/1.3 ui-monospace, Consolas, monospace;
   opacity: 0.92;
+  max-height: 90dvh;
+  overflow-y: auto;
 }
 .devbar summary { cursor: pointer; text-align: center; }
 .devbar fieldset { margin: 6px 0 0; padding: 4px 0 0; border: 0; border-top: 1px solid #333; }
@@ -725,6 +723,18 @@ dialog.sheet::backdrop { background: rgba(20, 24, 34, 0.45); }
   font: inherit;
 }
 .devbar button[aria-pressed="true"] { background: #2f6fed; border-color: #2f6fed; }
+.dev-forecast { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+.dev-forecast label { display: flex; flex-direction: column; min-width: 0; }
+.dev-forecast input, .dev-forecast select { width: 100%; min-width: 0; padding: 4px; color: #111; background: #fff; }
+#dev-status { margin-top: 6px; font-size: 11px; }
+
+/* Four concurrent reminders need a tighter phone layout to keep the actions
+   above the fold. Keep the character visible instead of clipping content. */
+@media (max-width: 799px) {
+  .main[data-reminders="4"] { gap: 6px; }
+  .main[data-reminders="4"] .stage { min-height: 80px; }
+  .main[data-reminders="4"] .reminder { padding: 4px 10px; gap: 8px; font-size: 0.9rem; }
+}
 
 /* ---------- Reduced motion ---------- */
 

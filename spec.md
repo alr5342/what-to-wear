@@ -38,7 +38,7 @@ All 16 hand-drawn phone and laptop designs are saved in `reference/` and are the
 | Info/credits | [info-phone.jpg](../reference/info-phone.jpg) | [info-laptop.jpg](../reference/info-laptop.jpg) — single-column, same structure as phone (see note below) |
 
 Layout notes carried from the drawings:
-- Main screen: top bar (location `▾`, info icon), `Today ▾` + current/forecast label, headline, character, condition icon + temp + source, a **flexible "Wearing" list** showing only whichever of the 5 categories apply, a stacked reminders list, Share button. On phone, a **"Change" button sits beside Share** and opens the Location & date sheet, so date/location stay thumb-reachable (#18); this is not in the drawings, see Revisions. Laptop splits into two columns: character alone on the left, all text/data stacked on the right.
+- Main screen: read-only location and selected date in the top bar, info icon, current/forecast label, headline, character, condition icon + temp + source, a **flexible "Wearing" list** showing only whichever of the 5 categories apply, a stacked reminders list, and Share. A single **"Location & date" button beside Share** opens the shared selector on both phone and laptop; there are no separate location/date buttons in the header. The phone control stays thumb-reachable (#18). These controls supersede the drawings; see Revisions. Laptop splits into two columns: character alone on the left, all text/data stacked on the right.
 - Location & date selector: phone = bottom sheet (search field, "Use my location," horizontally-scrollable date chips, Done). Laptop = centered two-column modal (location controls left, full date list right).
 - Share/outfit card: phone = bottom sheet with card preview + native **Share** button. Laptop = centered modal titled "Your Outfit Card" with card preview + **Download image** button (no native share on desktop).
 - Info/credits: both phone and laptop use the same single scrolling column of 5 sections (Creator, Weather data, How recommendations work, Privacy, Art credits) — an accepted simplification over the sidebar-navigation layout originally proposed (see Out of scope). The `info-laptop.jpg` drawing doesn't show the Art credits row, but requirement #23 below requires it in the built app regardless.
@@ -58,7 +58,7 @@ Layout notes carried from the drawings:
 
 ### Location
 5. **Manual entry and device location.** Users can set location by typing a US city/zip or by using the device's geolocation. Typed entry is resolved to latitude/longitude via the US Census Bureau Geocoding Services API (see `research.md`) before being passed to NWS, since NWS itself requires lat/lon and does not geocode.
-   *Acceptance check:* Both paths resolve to a valid NWS grid point and load a forecast.
+   *Acceptance check:* Both paths resolve to a valid NWS grid point and load a forecast. Include a New York ZIP (e.g., 10001): it must replace the previous location label, coordinates, forecast, and location+date recommendation key. Invalid or unmatched entry gives clear feedback instead of silently retaining the previous location as though the search succeeded.
 6. **Most recent location only.** Only the single most-recently-selected location is saved (in `localStorage`); choosing a new location replaces it.
    *Acceptance check:* After selecting location B then reloading the page, location A is not shown or retained anywhere.
 7. **First run.** With no saved location, the Main screen shows the first-run prompt (greyed character, "Set your location to get started," Search / Use my location buttons) instead of attempting a default location.
@@ -69,31 +69,59 @@ Layout notes carried from the drawings:
    *Acceptance check:* Changing any one of these independently (e.g., editing code to force a different icon without updating the state object) is not possible through normal use — all four always change together when the state changes, never independently.
 9. **At-a-glance layout.** On phone, all of location, date, units, source, current/forecast label, character, headline, temperature, the Wearing list, and reminders are visible without scrolling past them to find any single one (the Wearing list and reminders may each wrap to multiple lines but the section itself must not require scrolling to discover it exists).
    *Acceptance check:* On a 375×667 viewport, no required element is hidden below an unscrolled fold in a way that a first-time user wouldn't notice it's there.
-10. **Flexible Wearing list.** The "Wearing" section lists only the categories that apply to the current recommendation state (see Recommendation categories below), not a fixed 3 items.
-    *Acceptance check:* A warm, dry, calm-wind forecast shows only Top/Bottom/Footwear; a cold, rainy, windy forecast also shows Outerwear and Accessory.
+10. **Flexible Wearing list.** The "Wearing" section lists only the categories that apply to the current recommendation state (see Recommendation categories below), not a fixed 3 items. Labels describe the garment type only, without color names. Independent color variations remain visible on the character and share-card artwork.
+    *Acceptance check:* A warm, dry, calm-wind forecast shows only Top/Bottom/Footwear; a cold, rainy, windy forecast also shows Outerwear and Accessory. Wearing labels contain garment types without navy/olive/rust text, while character colors still vary and persist.
 
 ### Recommendation categories (5)
 Based on the REI layering model cited in `research.md`. **Top, Bottom, and Footwear are always shown.** Outerwear and Accessory are conditional:
 
-| Category | Shown when | Example variations (3 each) |
+| Clothing slot | Shown when | Reusable pieces |
 |---|---|---|
-| Top | always | T-shirt, Long-sleeve tee, Flannel shirt |
-| Bottom | always | Shorts, Jeans, Joggers |
-| Footwear | always | Sneakers, Boots, Sandals |
-| Outerwear | forecast low ≤ 60°F, OR windSpeed ≥ 15 mph (parsed, upper bound), OR precipitation probability ≥ 40% | Light jacket, Flannel overshirt, Raincoat |
-| Accessory | the Sun protection reminder OR the Cold/extra layer reminder is active (see below) | Sunglasses, Baseball cap, Beanie |
+| Top | always | T-shirt, lightweight long-sleeve shirt, sweater |
+| Bottom | always | Shorts, chinos, full-length joggers |
+| Footwear | always | Everyday sneakers, waterproof ankle boots, insulated waterproof boots |
+| Outerwear | forecast low ≤ 60°F, wind ≥ 15 mph, precipitation probability ≥ 40%, or a rain/storm/snow condition | Lightweight waterproof shell, insulated waterproof coat |
+| Accessory | daytime cold/snow, otherwise the sun reminder | Brimmed sun hat, beanie |
 
-*Acceptance check:* For each of the 5 categories, manually construct 3 qualifying forecasts and confirm the category appears/doesn't appear per the table, and that its displayed variation is one of its 3 defined options.
+**Developer decision (2026-10-12, Checkpoint 2):** Keep 13 reusable clothing source images. The five clothing slots above describe layering; the weather recommendation categories are storm/rain, daytime cold/snow, hot, jacket weather, sunny, and mild. **Every weather category, including overlapping conditions, must allow at least 3 distinct garment combinations before counting color changes.** Garment selections, three colorways (navy, olive, rust), headline wording, and each reminder wording are independently chosen and persisted. Colorways add variety; they do not satisfy the garment-combination minimum on their own.
+
+**Eligibility and overlap rules:**
+- Warm starts at a daytime high of 70°F. Warm tops: T-shirt or lightweight long-sleeve. Cool/daytime-cold/snow tops: lightweight long-sleeve or sweater; both work under the insulated coat.
+- Warm bottoms: shorts or chinos. Cool weather or any cold reminder: chinos or full-length joggers. Thus warm afternoons with cold nights keep a light top but use full-length bottoms and an extra layer.
+- Dry, non-daytime-cold weather: sneakers; ankle boots are also eligible below 70°F or with a cold reminder. Wet weather: waterproof ankle boots, upgraded to insulated waterproof boots with a cold reminder. Daytime cold/snow: insulated waterproof boots.
+- Daytime cold means high ≤45°F, daytime wind chill ≤40°F, or snow. A cold reminder caused only by the overnight low does not force a daytime beanie.
+- When outerwear is needed, a cold reminder selects the insulated waterproof coat; otherwise use the waterproof shell. Rain/storm and snow force appropriate outerwear even if precipitation probability is missing or below 40%.
+- Daytime cold/snow selects the beanie; otherwise an active sun reminder selects the sun hat; otherwise omit accessories. Every applicable reminder remains visible, independently of the headline.
+- Snow-only forecasts suppress the umbrella reminder; mixed rain/snow may trigger it. Snow uses cold clothing and a cold headline unless rain/storm takes priority.
+
+**Combination proof:** Every forecast has 2 eligible tops × 2 eligible bottoms = at least **4 distinct garment combinations**, even when shoes, outerwear, and accessories are fixed by conditions. For snow: long-sleeve + chinos; long-sleeve + joggers; sweater + chinos; sweater + joggers, all with the insulated coat/boots and beanie. The final artwork must keep top details and bottom silhouettes visible so these differences survive layering.
+
+*Acceptance check:* Enumerate eligible garment combinations for all 6 weather categories and overlapping threshold cases, ignoring colors; confirm at least 3. Exercise independent selections and verify weather-inappropriate pieces are never eligible. Checkpoint 2 uses distinct temporary SVG garment shapes; final PNG art and its recoloring quality are verified in the art checkpoint.
+
+### Recommendation headline
+
+**Developer decision (2026-10-12):** The headline reflects the most important applicable weather situation in this priority order: storm/rain → daytime cold/snow → hot (high ≥85°F) → jacket weather → sunny → mild (fallback). Each of the 6 situations has 3 wording variations, chosen independently of clothing and reminder choices and persisted for the location+date. The Main screen and share card read the same headline selection from the shared recommendation state. A 90°F afternoon with a 58°F overnight low gets a hot headline even though a layer is recommended for colder hours.
+
+| Situation | Approved wordings (3 each) |
+|---|---|
+| Storm/rain | “Rain-ready layers.” / “Keep your raincoat handy.” / “A rain layer kind of day.” |
+| Daytime cold/snow | “Bundle-up weather.” / “Warm layers, good call.” / “Keep the cozy layers close.” |
+| Hot | “Keep it light today.” / “Dress light, bring water.” / “Stay cool out there.” |
+| Jacket weather | “Grab a jacket!” / “A light layer goes a long way.” / “Keep a jacket handy.” |
+| Sunny | “Sunglasses weather!” / “Bring a little shade.” / “Sunny skies, sun-ready style.” |
+| Mild | “An easy outfit kind of day.” / “Keep it comfy today.” / “Ready, dressed, out the door.” |
+
+*Acceptance check:* Construct mock forecasts for each situation and for overlapping situations; confirm the highest-priority applicable situation wins. All 3 wordings per situation can be selected independently, and returning to the same location+date after reload preserves the selected wording.
 
 ### Reminders (4)
 Trigger thresholds proposed below, grounded in the REI/WHO/NWS guidance already cited in `research.md` — **please review and adjust any number you'd change.**
 
 | Reminder | Trigger | 3 wording variations (example) |
 |---|---|---|
-| Umbrella | precipitation probability ≥ 40% | "Bring an umbrella — rain's likely." / "Don't forget your umbrella today." / "Showers expected, grab an umbrella." |
-| Sun protection (proxy, not measured UV) | `shortForecast`/`icon` indicates clear/sunny conditions (keyword match: "sunny" or "clear") AND forecast high ≥ 60°F | "Sunny skies — wear sunscreen." / "UV's up there, don't skip the sunscreen." / "Clear and bright — protect your skin." |
+| Umbrella | precipitation probability ≥ 40%, except snow-only forecasts | "Bring an umbrella — rain's likely." / "Don't forget your umbrella today." / "Showers expected, grab an umbrella." |
+| Sun protection (proxy, not measured UV) | `shortForecast`/`icon` indicates clear/sunny conditions (keyword match: "sunny" or "clear") AND forecast high ≥ 60°F | "Sunny skies — wear sunscreen." / "Bright skies — don't skip the sunscreen." / "Clear and bright — protect your skin." |
 | Hydration | forecast high ≥ 85°F | "It's hot — drink extra water." / "Stay hydrated out there today." / "Heat's up, keep that water bottle full." |
-| Cold/extra layer | forecast low ≤ 45°F OR computed wind chill ≤ 40°F | "It's chilly — layer up." / "Cold one today, bundle up." / "Temps are dropping, add a layer." |
+| Cold/extra layer | forecast low ≤ 45°F OR computed daytime wind chill ≤ 40°F OR snow | "It's chilly — layer up." / "Cold one today, bundle up." / "Temps are dropping, add a layer." |
 
 *Acceptance check:* For each reminder, construct a forecast that crosses its threshold and confirm it appears with one of its 3 wordings, and a forecast that doesn't cross it and confirm it's absent.
 
@@ -102,9 +130,9 @@ Trigger thresholds proposed below, grounded in the REI/WHO/NWS guidance already 
 - **Wind chill** is computed client-side from `temperature` and `windSpeed` (parsed from strings like "10 mph" or "10 to 15 mph" by taking the upper bound) using the standard NWS wind chill formula: `35.74 + 0.6215T − 35.75(V^0.16) + 0.4275T(V^0.16)`, valid for T ≤ 50°F and V > 3 mph (outside that range, treat wind chill as equal to temperature, i.e., no wind-chill effect).
 
 ### Content variation and persistence
-11. **Independent random selection.** Each shown category's outfit variation and each active reminder's wording variation are chosen independently at random (not as fixed pairs) whenever a location+date combination is loaded for the first time.
-    *Acceptance check:* Load the same qualifying forecast conditions multiple times across different location/date combinations and confirm variation choices differ independently across categories/reminders, not in lockstep.
-12. **Persistence.** The chosen variation indexes are saved to `localStorage`, keyed by location + date. Returning to a previously selected date — including after a full page reload — shows the same variations.
+11. **Independent random selection.** Each shown slot's garment and colorway are chosen independently from the eligible pieces and 3 colorways; each active reminder's wording and headline wording are independently chosen from their 3 variations whenever a location+date combination is loaded for the first time. At least 3 garment combinations exist per weather category, independently of colors.
+    *Acceptance check:* Enumerate garment combinations and test independent selections across different location/date combinations, with identical qualifying weather. Choices vary independently and remain eligible.
+12. **Persistence.** Save garment IDs, colorway indexes, headline wording, and reminder wording indexes in `localStorage`, keyed by location + date. Returning to a previously selected date — including after a full page reload — shows the same variations. Recompute eligibility from weather; when a later forecast changes, reuse still-eligible selections and replace ineligible selections rather than retaining an inappropriate outfit. Corrupt or inaccessible storage must not crash rendering; unavailable storage uses in-memory choices for the session.
     *Acceptance check:* Select a date, note the outfit/reminders shown, reload the page, reselect the same date, and confirm identical variations appear.
 
 ### Share/outfit card
@@ -146,12 +174,13 @@ Trigger thresholds proposed below, grounded in the REI/WHO/NWS guidance already 
   isForecast: boolean,       // false = today ("Current"), true = future day
   tempF: number,
   conditionIcon: string,
+  headline: { situation, variationIndex },
   outfit: {
-    top: variationIndex,
-    bottom: variationIndex,
-    footwear: variationIndex,
-    outerwear: variationIndex | null,   // null = category not shown
-    accessory: variationIndex | null
+    top: { itemId, colorIndex },
+    bottom: { itemId, colorIndex },
+    footwear: { itemId, colorIndex },
+    outerwear: { itemId, colorIndex } | null,   // null = category not shown
+    accessory: { itemId, colorIndex } | null
   },
   reminders: [
     { type: "umbrella" | "sun" | "hydration" | "cold", active: boolean, variationIndex }
@@ -162,20 +191,22 @@ This object is computed from live weather data using the category/reminder rules
 
 ## Content variation
 
-See Reminders and Recommendation categories tables above for the required 3 variations each, and Persistence (#11–12) for the independent-random-selection and reload-persistence rules.
+See Recommendation categories for the 13-piece wardrobe, at least 3 garment combinations per weather category, and 3 extra colorways; Recommendation headline and Reminders for 3 wordings each; and Persistence (#11–12) for independent selection and reload persistence.
 
 ## Assets
+
+**Character visual requirement (reaffirmed 2026-10-12):** The finished character and clothing must be a polished, fully AI-generated illustration: professional, distinctive, nuanced, and playful. The current geometric SVG character and garment shapes are temporary layout/logic stand-ins, not the approved visual direction. Generate a consistent illustrated base and matching transparent garment layers; do not ship a character assembled from code-drawn geometric shapes. Review and approve the seed illustration with the Developer before generating the remaining artwork, then verify layering, visible garment differences, and three colorways in the app.
 
 | Asset | Appears | Format | Source | Credit/license |
 |---|---|---|---|---|
 | Base character (neutral pose) | Main, Share card | PNG | AI-generated (ChatGPT image tools) | Credited on Info screen |
-| 15 outfit pieces (5 categories × 3 variations) | Main, Share card | PNG, layered onto character | AI-generated (ChatGPT image tools), using the base character as visual reference | Credited on Info screen |
+| 13 reusable clothing pieces: 3 tops, 3 bottoms, 3 footwear, 2 outerwear, 2 accessories; 3 colorways applied by the renderer | Main, Share card | PNG, layered onto character, prepared for recoloring | AI-generated (ChatGPT image tools), using the base character as visual reference; distinct temporary SVGs for Checkpoint 2 | Credited on Info screen |
 | 5–6 weather condition icons (sunny, cloudy, rain, snow, storm/wind) | Main, Share card | SVG or PNG | AI-generated (ChatGPT image tools) | Credited on Info screen |
 | 4 reminder icons (umbrella, sun, hydration, cold) | Main reminders list | SVG or PNG | AI-generated (ChatGPT image tools) | Credited on Info screen |
 | UI chrome icons (location pin, info, back arrow, close ×, search, drag handle, share/download) | Top bar, modals, Info screen | SVG | Lucide icon library | ISC license (some icons derive from Feather, MIT). The license requires its notice to ship with the icons: copy kept at `assets/licenses/lucide-ISC.txt`; credit on Info screen |
 | Nunito font (variable, Latin subset) | All text | WOFF2, self-hosted | Nunito Project via Fontsource | SIL Open Font License 1.1: copy kept at `assets/licenses/nunito-OFL.txt`; credit on Info screen |
 
-~25 character/outfit/weather/reminder assets, consistent with the art estimate in `research.md`.
+Planning estimate: **23–24 character/outfit/weather/reminder source images** (1 base + 13 clothing + 5–6 weather icons + 4 reminder icons). Three renderer-applied colorways do not require separate generated garment images. Validate transparency, shading, and recoloring on a seed garment before producing the remaining PNGs. This section owns the current estimate. Headline wording adds 18 text lines, not image assets.
 
 ## Out of scope
 
@@ -192,6 +223,11 @@ After implementation or testing, record requirement changes and the evidence tha
 
 - **2026-10-05 (Checkpoint 1): phone thumb reach (#18).** The phone Main drawings put the location and date controls only in the top bar, in the top third of the screen, so they missed #18's lower-two-thirds requirement. Developer decision: keep the top bar exactly as drawn (still shows and opens location/date) and add a "Change" button beside Share that opens the same Location & date sheet. No requirement text changed. The phone Main drawings omit this button; update them if you want the drawings to match.
 - **2026-10-05 (Checkpoint 1): asset licenses.** Corrected the UI icon license from MIT to ISC after checking Lucide's LICENSE file. Added the self-hosted Nunito font (OFL) to the asset list. It's self-hosted so the app contacts no font server, which keeps the #22 privacy statement accurate.
+- **2026-10-12 (before Checkpoint 2): recommendation decisions.** Recovered the Developer's answers from the Claude Phase 2 history and received authorization to record them here: weather-matched clothing pools with 3 choices each, and a priority-based headline with 3 wordings per situation. Updated #11–12, the shared state shape, and the art estimate. Exact pool cutoffs, conflicting-condition handling, piece lists, and headline copy will be reviewed before the relevant implementation. Source: [recovered Claude conversation](transcripts/build-claude-2026-10-05_172818.md).
+- **2026-10-12 (Checkpoint 2 authorized):** Developer approved the 70°F cutoff, overlap/accessory/snow rules, headline wording and priority, and a smaller 13-piece wardrobe with 3 colorways, conditional on at least 3 actual garment combinations per weather category. Two eligible tops and two eligible bottoms provide 4 combinations for every condition, including snow. Replaced the earlier 3-pieces-per-pool requirement; updated garment IDs/color persistence and the art budget. Color alone does not count toward the combination minimum. Implementation proceeds against mocks; final art and live data remain later checkpoints.
+- **2026-10-12 (Checkpoint 2 phone fit):** Four reminders plus a two-line headline overflowed the 375×667 phone viewport with a 100px character minimum. Developer approved allowing the character to shrink to 80px only in this crowded state, preserving text sizes and keeping the actions above the fold. Other states keep their existing character sizing. Sun reminder wording now says “Bright skies” instead of implying a measured UV level.
+- **2026-10-12 (Checkpoint 2 review):** Developer verified the recommendation logic and requested one clearly labeled location/date control and garment-type-only Wearing labels. Replaced separate header buttons with read-only location/date text and made the single “Location & date” action beside Share available on both layouts. Reaffirmed polished generated illustration as the final art requirement; artwork remains a later checkpoint. New York ZIP lookup must be verified with live location/weather in Checkpoint 3. Overall Checkpoint 2 approval remains pending the interface review.
+- **2026-10-12 (Checkpoint 2 approval):** Developer reviewed the interface revisions and approved Checkpoint 2, including the single Location & date control and garment-type-only labels. The existing live location/weather requirements remain the scope for Checkpoint 3; present its overview before implementation.
 
 ## Approval
 

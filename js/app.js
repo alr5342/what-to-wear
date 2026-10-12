@@ -1,51 +1,28 @@
 // App wiring: owns the current screen/view/date and connects controls to the UI.
 //
-// Checkpoint 1 (static shell): the loaded view is painted from SAMPLE, a
-// placeholder shaped like a rendered recommendation. The next checkpoints
-// replace it with the recommendation state computed in state.js from live
-// NWS data (weather.js).
+// Checkpoint 2 uses mock forecasts. Live location/weather arrives next.
 
 import * as ui from './ui.js';
 import { initDevTools } from './dev.js';
+import { createRecommendationStore } from './state.js';
+import { MOCK_LOCATION, MOCK_FORECASTS } from './mock.js';
 
 const $ = (id) => document.getElementById(id);
-
-// ---- Placeholder content (removed once state.js exists) ----
-
-const SAMPLE = {
-  locationName: 'Austin, TX',
-  tempF: 58,
-  feelsLikeF: 54,
-  headline: 'Grab a jacket!',
-  wearing: [
-    { category: 'outerwear', label: 'Light jacket' },
-    { category: 'top', label: 'T-shirt' },
-    { category: 'bottom', label: 'Jeans' },
-    { category: 'footwear', label: 'Sneakers' },
-    { category: 'accessory', label: 'Baseball cap' },
-  ],
-  reminders: [
-    { type: 'umbrella', text: "Don't forget your umbrella today." },
-    { type: 'cold', text: "It's chilly — layer up." },
-  ],
-};
-
-const SAMPLE_CONDITION_LABEL = {
-  sunny: 'Sunny',
-  cloudy: 'Mostly cloudy',
-  rain: 'Rain showers',
-  snow: 'Light snow',
-  storm: 'Thunderstorms',
-};
 
 // ---- App state ----
 
 const days = buildDays(new Date());
 let selectedDay = 0;
 let view = 'loaded';
-let condition = 'cloudy';
+let forecastOverride = null;
 let currentScreen = 'main';
 let cameFromApp = false; // true once the in-app info button pushed a history entry
+let storage;
+try { storage = window.localStorage; } catch { /* Private/restricted contexts can deny access. */ }
+const recommendations = createRecommendationStore(storage);
+let devTools;
+
+const currentForecast = () => forecastOverride ?? MOCK_FORECASTS[selectedDay];
 
 /** Today plus the next 6 days (spec #2). */
 function buildDays(today) {
@@ -54,6 +31,7 @@ function buildDays(today) {
     const fmt = (options) => date.toLocaleDateString('en-US', options);
     return {
       date,
+      key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`,
       chipLabel: offset === 0 ? 'Today' : fmt({ weekday: 'short' }),
       short: fmt({ month: 'short', day: 'numeric' }),
       long: fmt({ month: 'short', day: 'numeric', year: 'numeric' }),
@@ -64,20 +42,22 @@ function buildDays(today) {
 
 function render() {
   const day = days[selectedDay];
+  const state = recommendations.get(currentForecast(), {
+    location: MOCK_LOCATION, date: day.key, today: days[0].key,
+  });
   ui.renderTopBar({
-    locationName: view === 'firstrun' ? '' : SAMPLE.locationName,
+    locationName: view === 'firstrun' ? '' : state.location.name,
     dateLabel: day.buttonLabel,
     isForecast: selectedDay > 0,
   });
   ui.renderLoaded({
-    ...SAMPLE,
-    condition,
-    conditionLabel: SAMPLE_CONDITION_LABEL[condition],
+    ...state,
     dateLong: day.long,
   });
   ui.setView(view);
   // Only a loaded forecast tints the page; other states stay neutral.
-  ui.setCondition(view === 'loaded' ? condition : 'neutral');
+  ui.setCondition(view === 'loaded' ? state.condition : 'neutral');
+  devTools?.update({ forecast: currentForecast(), state, persistent: recommendations.persistent });
 }
 
 // ---- Dialogs ----
@@ -97,8 +77,6 @@ for (const dialog of document.querySelectorAll('dialog.sheet')) {
   dialog.querySelector('[data-close]').addEventListener('click', () => dialog.close());
 }
 
-$('location-btn').addEventListener('click', () => openSelector());
-$('date-btn').addEventListener('click', () => openSelector());
 $('change-btn').addEventListener('click', () => openSelector());
 
 $('selector-done').addEventListener('click', () => {
@@ -156,12 +134,16 @@ window.addEventListener('hashchange', syncScreen);
 
 // ---- Start ----
 
-const overrides = initDevTools({
+devTools = initDevTools({
   onView: (next) => { view = next; render(); },
-  onCondition: (next) => { condition = next; render(); },
+  onForecast: (next) => { forecastOverride = next; render(); },
+  onReroll: () => {
+    recommendations.reroll(currentForecast(), { location: MOCK_LOCATION, date: days[selectedDay].key, today: days[0].key });
+    render();
+  },
 });
-view = overrides.view ?? view;
-condition = overrides.condition ?? condition;
+view = devTools.view ?? view;
+forecastOverride = devTools.forecast;
 
 render();
 syncScreen(); // honors a deep link straight to #info

@@ -1,21 +1,14 @@
 // DOM rendering for every screen and state. Nothing here decides *what* to
 // show — callers pass in display data and this module only paints it.
 
+import { garmentLayer } from './placeholder-art.js';
+
 const $ = (id) => document.getElementById(id);
 
 // Drawing order for the layered character, bottom to top.
 const LAYER_ORDER = ['base', 'bottom', 'footwear', 'top', 'outerwear', 'accessory'];
 
-// Placeholder art. Swapped for the generated PNGs (with per-asset offset/scale
-// so imperfectly aligned art can be nudged in code) once the seed set lands.
-const LAYER_SRC = {
-  base: 'assets/placeholder/base.svg',
-  top: 'assets/placeholder/top.svg',
-  bottom: 'assets/placeholder/bottom.svg',
-  footwear: 'assets/placeholder/footwear.svg',
-  outerwear: 'assets/placeholder/outerwear.svg',
-  accessory: 'assets/placeholder/accessory.svg',
-};
+const BASE_SRC = 'assets/placeholder/base.svg';
 
 // Icon sprite ids (see the <svg> sprite in index.html).
 const CONDITION_ICON = {
@@ -54,8 +47,9 @@ export function renderCharacter(container, wearing) {
   const layers = LAYER_ORDER
     .filter((layer) => layer === 'base' || worn.has(layer))
     .map((layer) => {
+      if (layer !== 'base') return garmentLayer(wearing.find((item) => item.category === layer));
       const img = document.createElement('img');
-      img.src = LAYER_SRC[layer];
+      img.src = BASE_SRC;
       img.alt = '';
       img.className = `layer layer-${layer}`;
       img.draggable = false;
@@ -63,7 +57,7 @@ export function renderCharacter(container, wearing) {
     });
   container.replaceChildren(...layers);
 
-  const list = wearing.map((item) => item.label.toLowerCase());
+  const list = wearing.map((item) => `${item.colorName} ${item.label}`.toLowerCase());
   const described = list.length > 1
     ? `${list.slice(0, -1).join(', ')} and ${list.at(-1)}`
     : list.join('');
@@ -72,12 +66,12 @@ export function renderCharacter(container, wearing) {
 
 /** Paints the loaded Main view and the share card from one display object. */
 export function renderLoaded(data) {
-  $('headline').textContent = data.headline;
+  $('headline').textContent = data.headline.text;
 
   $('condition-icon').replaceChildren(icon(CONDITION_ICON[data.condition]));
   $('temp').textContent = `${data.tempF}°F`;
   // Only show "feels like" when it actually differs from the temperature.
-  $('feels').textContent = data.feelsLikeF !== data.tempF ? `(feels ${data.feelsLikeF}°)` : '';
+  $('feels').textContent = data.feelsLikeF !== data.tempF ? `(feels ${data.feelsLikeF}°F)` : '';
   $('condition-label').textContent = data.conditionLabel;
 
   $('wearing-list').replaceChildren(...data.wearing.map((item) => {
@@ -86,12 +80,16 @@ export function renderLoaded(data) {
     const tile = document.createElement('span');
     tile.className = 'wearing-icon';
     tile.append(icon(CATEGORY_ICON[item.category]));
-    li.append(tile, item.label);
+    const label = document.createElement('span');
+    label.textContent = item.label;
+    li.append(tile, label);
     return li;
   }));
 
-  const reminders = data.reminders.length
-    ? data.reminders.map((reminder) => {
+  const activeReminders = data.reminders.filter((reminder) => reminder.active);
+  $('main').dataset.reminders = String(activeReminders.length);
+  const reminders = activeReminders.length
+    ? activeReminders.map((reminder) => {
       const li = document.createElement('li');
       li.className = 'reminder';
       li.append(icon(REMINDER_ICON[reminder.type]), reminder.text);
@@ -107,15 +105,15 @@ export function renderLoaded(data) {
 
   // Share card mirrors the same data (spec #13).
   renderCharacter($('share-character'), data.wearing);
-  $('share-headline').textContent = data.headline;
+  $('share-headline').textContent = data.headline.text;
   $('share-icon').replaceChildren(icon(CONDITION_ICON[data.condition]));
   $('share-temp-value').textContent = `${data.tempF}°F`;
   $('share-condition').textContent = data.conditionLabel;
-  $('share-location').textContent = data.locationName;
+  $('share-location').textContent = data.location.name;
   $('share-date').textContent = data.dateLong;
 }
 
-/** Top bar: location name, date button label, and Current/Forecast badge. */
+/** Read-only top bar: selected location/date and Current/Forecast badge. */
 export function renderTopBar({ locationName, dateLabel, isForecast }) {
   $('location-name').textContent = locationName || 'Set your location';
   $('date-label').textContent = dateLabel;
