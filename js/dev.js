@@ -65,10 +65,15 @@ export function initDevTools({ onView, onForecast, onReroll }) {
     onForecast(next);
   });
   bar.append(views, presets, form, reroll, status);
+  const live = document.createElement('a');
+  live.href = '?dev';
+  live.textContent = 'Return to live weather';
+  bar.append(live);
   document.body.append(bar);
   return {
     view, forecast,
     update({ forecast: current, state, persistent }) {
+      if (!current || !state) { status.textContent = 'Set a location to load live weather, or choose a mock preset.'; return; }
       form.elements.high.value = current.highF;
       form.elements.low.value = current.lowF;
       form.elements.wind.value = current.windSpeed;

@@ -48,18 +48,18 @@ Layout notes carried from the drawings:
 
 ### Weather data
 1. **Current and forecast data.** The app fetches live data from the National Weather Service (`api.weather.gov`): resolve the chosen location via `/points/{lat},{lon}`, then read the 12-hour-period forecast from `/gridpoints/{office}/{x},{y}/forecast`.
-   *Acceptance check:* For a given location, the temperature, short forecast, precipitation probability, and sky cover shown on screen match the current NWS forecast for that location at the time of the request.
+   *Acceptance check:* For a given location, the displayed daytime temperature and short forecast, and the precipitation probability/wind used by the rules, match the current NWS forecast for that location at the time of the request. No mock weather is used in normal operation; the source is labeled “NWS forecast.”
 2. **Date range.** Users may select **today or any of the next 6 days (7 selectable days total)**, matching the Location & date selector drawings.
-   *Acceptance check:* The selector displays exactly 7 date options; selecting any one loads that day's daytime forecast period.
+   *Acceptance check:* The selector displays exactly 7 date options in the chosen location's timezone; selecting one loads that day's daytime forecast and paired night. If NWS has omitted an expired daytime period or an incomplete final day/night pair, show explicit missing-forecast feedback with a way to choose another date or retry; never substitute another day or mock temperatures.
 3. **Current vs. forecast label.** Today is labeled "Current" (using today's daytime forecast period, since NWS has no separate live-observation feed in our data flow); any other selected day is labeled "Forecast."
    *Acceptance check:* The label switches correctly when the user changes the selected date.
 4. **Units.** Temperature is always shown in Fahrenheit (°F), with no toggle (US-only app, per research decision).
    *Acceptance check:* Every temperature display includes the °F symbol; no Celsius control exists anywhere in the UI.
 
 ### Location
-5. **Manual entry and device location.** Users can set location by typing a US city/zip or by using the device's geolocation. Typed entry is resolved to latitude/longitude via the US Census Bureau Geocoding Services API (see `research.md`) before being passed to NWS, since NWS itself requires lat/lon and does not geocode.
+5. **Manual entry and device location.** Users can set location by typing a US city/ZIP or by using the device's geolocation. Typed entry is resolved to latitude/longitude via OpenStreetMap Nominatim (Developer-approved replacement; see `research.md`) before being passed to NWS. Search, Enter, and Done with typed input all submit the lookup. Only submitted searches make geocoding requests; there is no autocomplete. Repeated lookups are cached, requests are queued at least 1.1 seconds apart per tab, and OpenStreetMap attribution is visible in the selector and Info screen. Keep total prototype use within the provider's application-wide one-request/second limit. The Nominatim-compatible endpoint is configurable in `location-config.json`. Device coordinates go directly to NWS.
    *Acceptance check:* Both paths resolve to a valid NWS grid point and load a forecast. Include a New York ZIP (e.g., 10001): it must replace the previous location label, coordinates, forecast, and location+date recommendation key. Invalid or unmatched entry gives clear feedback instead of silently retaining the previous location as though the search succeeded.
-6. **Most recent location only.** Only the single most-recently-selected location is saved (in `localStorage`); choosing a new location replaces it.
+6. **Most recent location only.** Only the single most-recently-selected live location is saved (in `localStorage`); choosing a new location replaces it and removes previous live-location recommendation entries. Mock-preview selections are isolated in their own namespace and never become the saved live location.
    *Acceptance check:* After selecting location B then reloading the page, location A is not shown or retained anywhere.
 7. **First run.** With no saved location, the Main screen shows the first-run prompt (greyed character, "Set your location to get started," Search / Use my location buttons) instead of attempting a default location.
    *Acceptance check:* Clearing site data and reloading shows the first-run state, not an error or a stale forecast.
@@ -155,7 +155,7 @@ Trigger thresholds proposed below, grounded in the REI/WHO/NWS guidance already 
 21. **Contrast.** Icons and text meet at least 3:1 contrast against their background.
 
 ### Privacy and credits
-22. **Privacy statement.** The Info screen states: location is stored only in the browser (most recent only), sent only to the NWS API to fetch a forecast, and nothing is transmitted to or stored on a server the app controls.
+22. **Privacy statement.** The Info screen states: the most recent location and outfit choices are stored in the browser; submitted city/ZIP text is sent to Nominatim for lookup; coordinates are sent to NWS for forecasts; device coordinates are not sent to Nominatim; nothing is transmitted to or stored on a server the app controls. Include the OpenStreetMap privacy-policy link and credit the lookup provider.
 23. **Info screen completeness.** The Info screen includes all 5 sections: Creator, Weather data source, How recommendations work (methodology + sources), Privacy, Art credits.
     *Acceptance check:* Each of the 5 sections is present and non-empty on both phone and laptop.
 
@@ -164,7 +164,7 @@ Trigger thresholds proposed below, grounded in the REI/WHO/NWS guidance already 
 
 ## Recommendation state and data flow
 
-**Weather inputs** (from the NWS forecast endpoint, for the selected day's daytime period, plus its paired overnight period for the low): `temperature` (high and, from the adjacent night period, low), `shortForecast`/`icon`, `probabilityOfPrecipitation`, `windSpeed` (parsed to a number), and a client-computed wind chill derived from temperature + wind speed (see Reminders table note — the endpoint has no sky-cover or wind-chill field of its own).
+**Weather inputs** (from the NWS forecast endpoint, for the selected day's daytime period, plus its paired overnight period): daytime `temperature` for the displayed high; the lower of the daytime and adjacent night temperatures for the low (handles a warmer night without inventing a temperature); `shortForecast`/`icon`; `probabilityOfPrecipitation`; `windSpeed` (parsed to a number); and a client-computed wind chill derived from temperature + wind speed (see Reminders table note — the endpoint has no sky-cover or wind-chill field of its own). Missing temperatures or a missing/gapped day-night pair make that date unavailable. Date keys use the location's NWS timezone.
 
 **Shared state shape** (one object per location+date, computed once per fetch, driving every visual and written output):
 ```
@@ -228,6 +228,7 @@ After implementation or testing, record requirement changes and the evidence tha
 - **2026-10-12 (Checkpoint 2 phone fit):** Four reminders plus a two-line headline overflowed the 375×667 phone viewport with a 100px character minimum. Developer approved allowing the character to shrink to 80px only in this crowded state, preserving text sizes and keeping the actions above the fold. Other states keep their existing character sizing. Sun reminder wording now says “Bright skies” instead of implying a measured UV level.
 - **2026-10-12 (Checkpoint 2 review):** Developer verified the recommendation logic and requested one clearly labeled location/date control and garment-type-only Wearing labels. Replaced separate header buttons with read-only location/date text and made the single “Location & date” action beside Share available on both layouts. Reaffirmed polished generated illustration as the final art requirement; artwork remains a later checkpoint. New York ZIP lookup must be verified with live location/weather in Checkpoint 3. Overall Checkpoint 2 approval remains pending the interface review.
 - **2026-10-12 (Checkpoint 2 approval):** Developer reviewed the interface revisions and approved Checkpoint 2, including the single Location & date control and garment-type-only labels. The existing live location/weather requirements remain the scope for Checkpoint 3; present its overview before implementation.
+- **2026-10-12 (Checkpoint 3 authorized/provider approved):** Developer approved the live location/weather scope and then approved Nominatim after Census was found to require a street address. Updated #5 and #22 for the actual lookup and privacy flow, #6 for most-recent-live-location storage, and #1–2/data flow for faithful NWS display and explicit handling of unavailable daytime periods. Explicit mock previews remain available for rule testing; plain `?dev` now uses live weather until a mock preset is chosen. Developer checkpoint verification is pending.
 
 ## Approval
 

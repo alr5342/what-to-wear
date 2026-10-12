@@ -128,21 +128,22 @@ export function createRecommendation(forecast, { location, date, today, previous
   return {
     location, date, isForecast: date !== today, tempF: facts.highF,
     feelsLikeF: Math.round(facts.feelsLikeF), lowF: facts.lowF,
-    condition: facts.condition, conditionLabel: CONDITION_LABEL[facts.condition],
+    condition: facts.condition, conditionLabel: forecast.shortForecast || CONDITION_LABEL[facts.condition],
     headline, outfit, wearing, reminders,
     combinationCount: countGarmentCombinations(facts.eligible),
   };
 }
 
 /** Local storage is optional. Keep a tab-local fallback if access/quota fails. */
-export function createRecommendationStore(storage) {
+export function createRecommendationStore(storage, { namespace = 'mock' } = {}) {
   const memory = new Map();
+  const prefix = `what-to-wear:${namespace}:v1:`;
   let persistent = Boolean(storage);
   return {
     get persistent() { return persistent; },
     get(forecast, options) {
       const { location, date } = options;
-      const key = `what-to-wear:mock:v1:${location.lat},${location.lon}:${date}`;
+      const key = `${prefix}${location.lat},${location.lon}:${date}`;
       let previous = memory.get(key);
       if (!previous && storage) {
         try {
@@ -160,7 +161,7 @@ export function createRecommendationStore(storage) {
     },
     // Preview-only reroll: replace just this recommendation, never clear site data.
     reroll(forecast, options) {
-      const key = `what-to-wear:mock:v1:${options.location.lat},${options.location.lon}:${options.date}`;
+      const key = `${prefix}${options.location.lat},${options.location.lon}:${options.date}`;
       const state = createRecommendation(forecast, options);
       memory.set(key, state);
       if (storage) {
@@ -168,6 +169,21 @@ export function createRecommendationStore(storage) {
         catch { persistent = false; }
       }
       return state;
+    },
+    // Live mode saves only the current location; mock previews use another namespace.
+    retainLocation(location) {
+      const keep = `${prefix}${location.lat},${location.lon}:`;
+      for (const key of memory.keys()) if (!key.startsWith(keep)) memory.delete(key);
+      if (storage) {
+        try {
+          const remove = [];
+          for (let index = 0; index < storage.length; index++) {
+            const key = storage.key(index);
+            if (key?.startsWith(prefix) && !key.startsWith(keep)) remove.push(key);
+          }
+          remove.forEach((key) => storage.removeItem(key));
+        } catch { persistent = false; }
+      }
     },
   };
 }

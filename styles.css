@@ -467,6 +467,20 @@ dialog.sheet::backdrop { background: rgba(20, 24, 34, 0.45); }
   font-weight: 700;
 }
 
+.search-submit {
+  align-self: stretch;
+  padding: 0 6px;
+  border: 0;
+  background: transparent;
+  font-weight: 900;
+  color: var(--focus);
+}
+.search-status { color: var(--ink-soft); font-size: 0.9rem; font-weight: 700; }
+.search-status:empty { display: none; }
+.search-credit { color: var(--ink-soft); font-size: 0.75rem; }
+.search-credit a { color: inherit; }
+button:disabled { cursor: wait; opacity: 0.65; }
+
 .selector-dates {
   min-width: 0; /* lets the chip row scroll inside a fieldset */
   margin: 0;

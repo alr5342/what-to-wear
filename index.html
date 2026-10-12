@@ -150,12 +150,13 @@
           <div class="message">
             <svg class="icon icon-hero" aria-hidden="true"><use href="#i-alert"/></svg>
             <h1 class="message-title">Unable to load weather data.</h1>
-            <p class="message-body">Please try again.</p>
+            <p id="error-detail" class="message-body">Please try again.</p>
           </div>
           <div class="actions">
             <button class="btn btn-primary btn-block" type="button" data-action="retry">
               <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg> Retry
             </button>
+            <button class="btn btn-secondary" type="button" data-action="search">Location &amp; date</button>
           </div>
         </div>
 
@@ -200,7 +201,7 @@
         <svg class="icon icon-lg" aria-hidden="true"><use href="#i-cloud"/></svg>
         <div>
           <h2 id="info-weather">Weather data</h2>
-          <p class="placeholder-text">Weather data source details go here.</p>
+          <p>Forecasts: <a href="https://www.weather.gov/documentation/services-web-api">National Weather Service</a>. City/ZIP lookup: Nominatim, <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>.</p>
         </div>
       </section>
       <section class="info-section" aria-labelledby="info-method">
@@ -214,7 +215,7 @@
         <svg class="icon icon-lg" aria-hidden="true"><use href="#i-lock"/></svg>
         <div>
           <h2 id="info-privacy">Privacy</h2>
-          <p class="placeholder-text">Privacy practices go here.</p>
+          <p>Your most recent location and outfit choices are stored in this browser. Submitted city/ZIP searches are sent to Nominatim; location coordinates are sent to the National Weather Service for forecasts. Device coordinates are not sent to Nominatim. This app has no account or server storing your location. <a href="https://osmfoundation.org/wiki/Privacy_Policy">OpenStreetMap privacy policy</a>.</p>
         </div>
       </section>
       <section class="info-section" aria-labelledby="info-art">
@@ -241,13 +242,16 @@
       <div class="selector-grid">
         <section class="selector-location" aria-labelledby="selector-loc-title">
           <h3 id="selector-loc-title" class="section-label">Location</h3>
-          <form id="search-form" class="search-form" role="search">
+          <form id="search-form" class="search-form" role="search" aria-describedby="search-status">
             <label for="search-input" class="sr-only">City or zip code</label>
             <div class="search-field">
               <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
-              <input id="search-input" type="search" placeholder="Search city or zip" autocomplete="off" enterkeyhint="search">
+              <input id="search-input" type="search" placeholder="City, state or ZIP" maxlength="120" autocomplete="off" enterkeyhint="search">
+              <button class="search-submit" type="submit">Search</button>
             </div>
           </form>
+          <p id="search-status" class="search-status" role="status" aria-live="polite"></p>
+          <p class="search-credit">Location search: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors</a></p>
           <button class="btn btn-secondary btn-block" type="button" data-action="geolocate">
             <svg class="icon" aria-hidden="true"><use href="#i-locate"/></svg> Use my location
           </button>

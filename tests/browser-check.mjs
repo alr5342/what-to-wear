@@ -42,7 +42,7 @@ try {
   const page = await context.newPage();
   page.on('pageerror', (error) => errors.push(error.message));
   page.on('console', (entry) => { if (entry.type() === 'error') errors.push(entry.text()); });
-  await page.goto(`${origin}/?dev`);
+  await page.goto(`${origin}/?mock&dev`);
   await loaded(page);
   const first = await snapshot(page);
   const firstTemp = await page.locator('#temp').textContent();
@@ -60,7 +60,7 @@ try {
   await page.locator('.chip').nth(1).click(); await page.locator('#selector-done').click();
   check(await page.locator('#period-label').textContent() === 'Forecast', 'future-day label');
   const future = await snapshot(page);
-  check(await page.locator('#temp').textContent() !== firstTemp, 'plain ?dev preserves different daily mock forecasts');
+  check(await page.locator('#temp').textContent() !== firstTemp, '?mock&dev preserves different daily mock forecasts');
   await page.reload(); await loaded(page);
   await page.locator('#change-btn').click(); await page.locator('.chip').nth(1).click(); await page.locator('#selector-done').click();
   assert.deepEqual(await snapshot(page), future); checks++;
@@ -144,6 +144,7 @@ try {
   check(await page.locator('#share-character').innerHTML() === mainLayers, 'share garments and colors match main');
   await page.keyboard.press('Escape');
   await page.locator('#info-btn').click();
+  await page.locator('#info-screen').waitFor({ state: 'visible' });
   check(await page.locator('#info-screen').isVisible(), 'info opens');
   await page.locator('#info-back').click();
   await page.locator('#main-screen').waitFor({ state: 'visible' });
@@ -173,7 +174,7 @@ try {
   await restricted.addInitScript(() => Object.defineProperty(window, 'localStorage', { get() { throw new Error('Denied'); } }));
   const blocked = await restricted.newPage();
   blocked.on('pageerror', (error) => errors.push(error.message));
-  await blocked.goto(`${origin}/?dev`); await loaded(blocked);
+  await blocked.goto(`${origin}/?mock&dev`); await loaded(blocked);
   check(/tab only/.test(await blocked.locator('#dev-status').textContent()), 'denied storage fallback is reported');
   await restricted.close();
   check(errors.length === 0, `no browser errors: ${errors.join('; ')}`);
