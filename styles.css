@@ -355,7 +355,7 @@ button { cursor: pointer; }
   margin-top: auto;
   padding-top: 4px;
 }
-.actions .btn { flex: 1; }
+.actions .btn { flex: 1; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 
 /* ---------- First run / error / denied ---------- */
 
