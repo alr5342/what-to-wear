@@ -1,0 +1,37 @@
+{
+  "url": "https://alr5342.github.io/what-to-wear/",
+  "verifiedAt": "2026-10-13T02:46:58.077Z",
+  "mainCommit": "cbce6f9683470f587a6c2a8b61c2a4cfc35d2a97",
+  "deploymentCommit": "861404a97ce23887d58ad5e9d950743504c45783",
+  "files": [
+    {
+      "file": "index.html",
+      "http": 200,
+      "sha256": "a29a9ed7e3fbd1c527e9fb78cc07fa751bbafa5b1bcad52269488b839977567f",
+      "matchesApprovedSource": true
+    },
+    {
+      "file": "js/app.js",
+      "http": 200,
+      "sha256": "c6d5b61a5cda174dc9f26c22f86778849ca67f0377c0a4fe90e001084e484159",
+      "matchesApprovedSource": true
+    },
+    {
+      "file": "js/state.js",
+      "http": 200,
+      "sha256": "4c4c1a16cd42248353010ac359e585fc07519a152e197064fe9187b9a15eb4b1",
+      "matchesApprovedSource": true
+    },
+    {
+      "file": "js/weather.js",
+      "http": 200,
+      "sha256": "75732919f2ad624d672d3924135e7b436d504a775bb14dee15b77cfed2ac7990",
+      "matchesApprovedSource": true
+    }
+  ],
+  "artworkChanged": false,
+  "controlledBrowserChecks": 47,
+  "realProviderBrowserChecks": 24,
+  "realTodayFallbackObserved": "Austin missing Today; next actual NWS day selected and explicitly labeled",
+  "physicalDeviceVerified": false
+}

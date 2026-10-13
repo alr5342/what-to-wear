@@ -6,7 +6,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { HEADLINES, REMINDERS, analyzeForecast } from '../js/state.js';
-import { buildForecastDays, normalizePeriods } from '../js/weather.js';
+import { buildForecastDays, normalizePeriods, selectForecastDay } from '../js/weather.js';
 
 const { chromium } = await import(pathToFileURL(resolve(process.argv[2])).href);
 const live = process.argv.includes('--live');
@@ -148,7 +148,13 @@ try {
       for (const index of indexes) {
         await page.locator('#change-btn').click(); await page.locator('.chip').nth(index).click();
         await page.locator('#selector-done').click();
-        const expected = daily.get(dates[index].key);
+        const selection = selectForecastDay({ daily }, dates, index);
+        const actualDate = dates[selection.index];
+        const expected = daily.get(actualDate.key);
+        if (selection.notice) {
+          check(/Today.*unavailable/.test(await page.locator('#weather-source').textContent()), 'real missing Today explains its fallback');
+          check(await page.locator('#date-label').textContent() !== 'Today', 'real fallback is labeled with its actual future date');
+        }
         if (!expected) {
           await view(page, 'error');
           check(/complete daytime forecast/.test(await page.locator('#error-detail').textContent()), 'unavailable selected date is explicitly reported');
@@ -165,7 +171,7 @@ try {
         const garments = await page.locator('#character [data-item]').evaluateAll((nodes) => nodes.map((node) => ({ category: node.className.split('layer-')[1], id: node.dataset.item })));
         const eligible = analyzeForecast(expected).eligible;
         check(garments.every((item) => eligible[item.category]?.includes(item.id)), 'outfit categories match rules for this actual forecast');
-        evidence.push({ location: await page.locator('#location-name').textContent(), date: dates[index].key,
+        evidence.push({ location: await page.locator('#location-name').textContent(), date: actualDate.key, requestedDate: dates[index].key, fallback: Boolean(selection.notice),
           forecastURL: response.url, updated: response.json.properties.updateTime,
           forecast: expected, displayed: { temp: actual.temp, condition: actual.condition }, garments });
       }
