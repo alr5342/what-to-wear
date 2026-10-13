@@ -13,12 +13,12 @@ Search a US ZIP or city and state, or grant device-location permission. Choose t
 ## Project records
 
 - `brief.md`, `research.md`, `spec.md`, and `plan.md` record scope, evidence, decisions, checkpoint verification, and remaining work.
-- `transcripts/` preserves research, planning, implementation, approvals, and subsequent debrief conversations when completed.
+- `transcripts/` preserves research, specification, planning, implementation, approvals, and the completed debrief (`debrief-2026-10-12_224129.md`).
 - `reference/` contains required visual references and screen drawings; `project-3-character/` contains the approved character reference.
 - `assets/art/source/`, the character master, and `assets/art/prompts.md` preserve source artwork and provenance. The app loads only the prepared runtime layers/icons.
 - `verification/` retains compact machine-readable checks and representative outfit evidence. Other screenshots are reproducible local outputs and are ignored.
 
-The remaining clothing alignment imperfections were explicitly accepted at Checkpoint 4. Checkpoints 5 and 6, deployment status, peer testing, and final submission readiness are tracked in `plan.md`; pending peer/debrief records must not be treated as completed work.
+The remaining clothing alignment imperfections were explicitly accepted at Checkpoint 4. Three brief peer reviews and their aggregate findings, approved/deployed improvements, the completed debrief, and final submission evidence are tracked in `plan.md`. Individual peer-session details were not supplied; the records preserve that limitation.
 
 ## Verification and maintenance
 
@@ -28,4 +28,4 @@ Normal URLs always use live weather. `?mock&dev` explicitly enables development 
 
 `scripts/optimize-png.mjs` is an optional offline utility that losslessly recompresses PNGs, verifies exact decoded pixel equality, and replaces only smaller outputs. It is not an app dependency. Generated ZIPs and local release staging belong in ignored `.release/`, never in the submitted repository.
 
-Submit the final approved and pushed repository using GitHub's **Code → Download ZIP**, after completing the deliverable audit in `plan.md`. Git history remains on GitHub; `commit-log.txt` will provide the required readable history in the final ZIP.
+Submit the final approved and pushed repository using GitHub's **Code → Download ZIP**. Git history remains on GitHub; `commit-log.txt` provides full commit IDs, dates, and messages through its stated cutoff, including the separate deployment branch. The metadata commit containing the log cannot contain its own hash.

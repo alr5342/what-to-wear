@@ -30,7 +30,7 @@ During implementation, follow the approved plan in working checkpoints and keep 
 
 **Dependencies:** `api.weather.gov` (NWS, no key), `nominatim.openstreetmap.org` (accepted usage limits in `research.md`), browser geolocation/localStorage, Web Share and Canvas PNG export, Lucide UI icons (ISC), and locally served generated PNG artwork. Art production used the Agent's built-in image tool and a PowerShell/System.Drawing crop/mask utility; neither is needed to run or deploy the app.
 
-**Current task order:** Exactly six checkpoints. Checkpoints 1–5 are approved and committed; Checkpoint 5 is `d3854f6` and is pushed to GitHub main. The Developer authorized Checkpoint 5 polish, deployment, and safe cleanup, and subsequently approved its checkpoint commit and push. Local release work and checks are complete; the Developer approved creating the public repository and publishing a separate deployment-only snapshot. Public HTTPS verification passed; the Developer reviewed and approved Checkpoint 5. Residual clothing alignment issues remain accepted; no artwork pass is planned. Checkpoint 6 remains peer testing/improvement, debrief, transcripts, commit log, and final push/GitHub ZIP submission audit.
+**Current task order:** Exactly six checkpoints. Checkpoints 1–5 are approved and committed. Checkpoint 6's peer-supported revision is approved, committed, deployed, and publicly verified. The debrief is complete and saved. The Developer has authorized final submission housekeeping, including the commit log, remaining commits, push to main, and final repository/deployment checks. No application changes are requested; residual clothing alignment issues remain accepted. See the final submission audit below for current evidence and limitations; earlier pending/handoff entries are historical.
 
 ## Six-checkpoint schedule
 
@@ -41,9 +41,9 @@ During implementation, follow the approved plan in working checkpoints and keep 
 | 3 | Working city/ZIP/device location, live NWS weather, saved location, recovery | Approved; `d753f48` |
 | 4 | Illustrated character/13-piece wardrobe, weather/reminder artwork, three colorways, phone Share/laptop PNG download, and strict development-only mocks | Approved as-is; committed `997036c`; residual alignment limitation accepted |
 | 5 | Essential responsive/accessibility and Info/credits/privacy polish, GitHub Pages setup and deployed checks, safe project-size optimization, peer-test readiness | Approved; committed/pushed `d3854f6`; public HTTPS verified |
-| 6 | Three real peer sessions and findings, supported improvement/redeployment, completed debrief and transcript, implementation transcripts, commit-log.txt, final pushed repository and GitHub Download ZIP audit | Three brief reviews reported; Usability revision committed/pushed cbce6f9 and publicly verified; debrief/submission pending |
+| 6 | Three real peer sessions and findings, supported improvement/redeployment, completed debrief and transcript, implementation transcripts, commit-log.txt, final pushed repository and GitHub Download ZIP audit | Peer revision cbce6f9 approved/deployed; debrief saved; final submission housekeeping authorized and being verified |
 
-**Review and commit rule:** The Developer verifies and approves each checkpoint before its commit. The Developer explicitly authorized a public repository and a separate site-only `gh-pages` snapshot to verify Pages before Checkpoint 5 review. Checkpoint 5 approval was received and its commit/push completed (`d3854f6`). The Developer approved the Checkpoint 6 usability revision for commit/push/redeployment; debrief and final submission housekeeping remain pending within Checkpoint 6. Routine fixes, tests, transcript snapshots, and deployment follow-ups stay within their owning checkpoint; exactly six checkpoints.
+**Review and commit rule:** The Developer verifies and approves each checkpoint before its commit. The Developer explicitly authorized the public repository and separate site-only `gh-pages` deployment, approved Checkpoint 5 (`d3854f6`), and approved the Checkpoint 6 usability revision (`cbce6f9`). In the finalization request, the Developer confirmed the completed/saved debrief and explicitly authorized committing remaining submission files and pushing main. This authorizes the documentation/status reconciliation and commit-log export; no further application pass is planned. Exactly six checkpoints.
 
 **Main risks:**
 - NWS grid resolution can fail or return unexpected shapes near coastal/territory boundaries — covered by the existing service-error state (#16).
@@ -77,11 +77,11 @@ During implementation, follow the approved plan in working checkpoints and keep 
 - [x] **Checkpoint 4:** PNG Share/Download and fallback/recovery implemented; shared selected outfit and colors across Main/card/export. Included in as-is approval. Actual native receiving-app behavior remains a deployment smoke check, not a claimed completed manual test.
 - [x] **Checkpoint 4:** All 13 garments, five weather icons, four reminder icons integrated; four same-color combinations per tested profile. Remaining visual alignment imperfections accepted.
 - [x] **Checkpoint 4:** Developer approved the checkpoint as-is and directed its commit and cumulative transcript save on 2026-10-12.
-- [ ] **Checkpoint 5:** Responsive/accessibility pass: one-handed phone reachability, laptop two-column layout, icon shape-plus-color distinction, 3:1 contrast check (spec #18–21)
-- [ ] **Checkpoint 5:** Build out the Info/credits screen's 5 sections with real content (spec #22–23), including final art source/tool attribution
-- [ ] **Checkpoint 5:** Gate or remove the developer override from the normal UI path before peer testing
+- [x] **Checkpoint 5:** Responsive/accessibility pass: one-handed phone reachability, laptop two-column layout, icon shape-plus-color distinction, 3:1 contrast check (spec #18–21)
+- [x] **Checkpoint 5:** Build out the Info/credits screen's 5 sections with real content (spec #22–23), including final art source/tool attribution
+- [x] **Checkpoint 5:** Gate or remove the developer override from the normal UI path before peer testing
 - [ ] **Checkpoint 5:** Audit package size, optimize safely, preserve required deliverables/source/transcripts, and verify the GitHub-generated ZIP contents (see release preparation below)
-- [ ] **Checkpoint 5:** Prepare the GitHub repository/remote and Pages target (proposed: `main` branch, repo root — no build step); obtain Developer verification/approval of the local release candidate and concrete target before commit/publication
+- [x] **Checkpoint 5:** Prepare the public GitHub repository/remote and approved `gh-pages` root target; Developer approval and commit/publication recorded below.
 - [ ] **Checkpoint 5:** Publish to GitHub Pages, verify live assets/location/weather/share/privacy and HTTPS behavior on phone/laptop, and prepare the existing peer-test protocol; report the deployed URL and save the transcript. Keep deployment corrections within this checkpoint, with review before committing fixes.
 
 ### Verify and revise
@@ -89,22 +89,22 @@ During implementation, follow the approved plan in working checkpoints and keep 
 - [ ] Check every specification requirement (#1–24) against the deployed app, not only the local copy
 - [ ] Using the developer override, test every recommendation-category and reminder threshold in `spec.md` (both just-crossing and just-under each boundary), across multiple locations and both current and forecast dates
 - [ ] Verify weather-matched clothing, reminder, and headline variations are chosen independently, not as fixed pairs, by holding forecast conditions fixed (via the override) across repeated/different location+date loads; include overlapping conditions to verify headline priority and pool suitability
-- [ ] Verify that returning to a previously selected date — including after a full page reload — shows the same variations
-- [ ] Test the three failure states (slow/throttled network, a forced failed fetch, and a denied location prompt) and confirm each recovery action works
+- [x] Verify that returning to a previously selected date — including after a full page reload — shows the same variations
+- [x] Test the three failure states (slow/throttled network, a forced failed fetch, and a denied location prompt) and confirm each recovery action works
 - [ ] Test the deployed app, independently of the local version, on a real phone and a real laptop: one-handed reachability of date/location/Share, the laptop two-column layouts, the native Share sheet on phone, PNG download on laptop, a color-blindness simulation, and contrast
-- [ ] Confirm the developer override is gated/removed before peer sessions
+- [x] Confirm the developer override is gated/removed before peer sessions
 - [x] Prepare the usability test below
 - [x] **Checkpoint 6:** Three brief peer reviews completed per Developer report; aggregate findings and limits of supplied session details recorded below
 - [x] **Checkpoint 6:** Record the peer-supported recommendation/date-recovery improvements and update spec.md; implementation review pending
-- [ ] **Checkpoint 6:** Implement and verify at least one meaningful revision; obtain Developer review/approval before committing and redeploying it
+- [x] **Checkpoint 6:** Implement and verify at least one meaningful revision; obtain Developer review/approval before committing and redeploying it
 
 ### Deliver
 
 - [ ] **Checkpoint 6:** Confirm all brief deliverables, public URL, peer notes/revision evidence, sources, privacy information, and asset credits; prepare submission materials
-- [ ] **Checkpoint 6:** Complete the debrief using the provided `debrief.md` instructions when available, with the Developer's own decisions and verification reflected accurately
+- [x] **Checkpoint 6:** Complete the debrief using the provided `debrief.md` instructions when available, with the Developer's own decisions and verification reflected accurately
 - [ ] **Checkpoint 6:** Save the completed debrief conversation in `transcripts/`, retain implementation transcripts, and generate plain-text `commit-log.txt` with full commit IDs, dates, and complete commit messages, without patches/code
 - [ ] **Checkpoint 6:** Commit and push all final project files after approval; audit the completed repository's **Code → Download ZIP** archive as the submission artifact
-- [ ] **Checkpoint 6:** Obtain Developer verification/approval of final documentation/submission readiness before the final commit; save all implementation/debrief transcripts. Actual submission follows the Developer's explicit direction.
+- [x] **Checkpoint 6:** Obtain Developer verification/approval of final documentation/submission readiness before the final commit; save all implementation/debrief transcripts. Actual submission follows the Developer's explicit direction.
 
 ## Usability testing
 
@@ -276,3 +276,15 @@ Prefer the local session history when accessible. Verify that the opening reques
 - Public controlled browser suite: **47 checks passed**, including device location with available Today, expired Today fallback, future selection, and location/date recovery. Public real-provider suite: **24 checks passed**, including actual New York/Austin NWS forecasts, outfit eligibility, selected future days, reload, and an actual missing-Today response in Austin with correctly labeled next-date fallback. Physical phone permission/share behavior was not newly verified.
 - Updated the live test expectation that previously required an error for missing Today; the first run stopped on this obsolete expectation, and the updated rerun passed. No new app changes were required. Evidence: [deployment/source matches](verification/checkpoint-6-public-deployment.json), [real forecast comparisons](verification/checkpoint-6-public-live-weather.json).
 - **Debrief handoff:** Do not conduct the debrief in this implementation conversation. The Developer will open a fresh chat and use the exact start command in the unchanged debrief.md. The debrief conversation/transcript, final commit-log.txt refresh, final push, and GitHub Code -> Download ZIP audit remain pending within Checkpoint 6. Do not mark the full checkpoint or submission complete yet.
+
+## Final submission audit — 2026-10-12
+
+**Authorization and scope:** The Developer confirmed the completed/saved debrief and directed verification, generation of commit-log.txt, remaining commits, push to main, clean-tree/remote checks, and public HTTPS verification. This is submission housekeeping within Checkpoint 6. No application code, artwork, or behavior was changed.
+
+**Required materials verified:** brief.md, research.md, updated spec.md and plan.md, debrief.md, seven visual references and sixteen phone/laptop screen drawings, character reference, production/source artwork and provenance, fonts/licenses, implementation source, research/specification/planning transcripts, cumulative implementation transcripts, and the completed [debrief transcript](transcripts/debrief-2026-10-12_224129.md) are present. Three peer reviews and their aggregate findings/approved improvements are documented in this plan. The debrief was checked against its local session record: all discussion and save-direction messages are present; only the later file-path confirmation lies outside its disclosed snapshot. Preserve the original transcript unchanged.
+
+**Fresh verification:** All 30 location/weather/recommendation unit tests passed, including 4,800 forecast combinations. The public HTTPS release suite passed all 52 checks with minimum sampled text contrast 5.74:1, across phone/laptop viewports, keyboard/focus, enlarged text, share-card preparation, and asset/license loading. Prior public real-provider verification is retained in checkpoint-6-public-live-weather.json; this final release run did not repeat geocoder searches. The public runtime remains the approved gh-pages deployment at 861404a97ce23887d58ad5e9d950743504c45783.
+
+**Debrief evidence and limits:** The Developer reports successful laptop PNG downloads and mobile sharing with an image received by a friend. This updates earlier pending manual-share notes without claiming Agent observation. Individual peer dates/devices/task results were not supplied. Thorough one-handed testing, personal keyboard/screen-reader verification, direct source checking, and recorded before/after forecast examples remain limited. Automated keyboard/focus/contrast checks are separate evidence. Garment alignment remains accepted. The additional share feature's justification is already recorded in research.md → Project decisions: it supports the client's social-engagement campaign without a second data source; the debrief's uncertainty does not imply that documentation is missing. The proposed “Today” label remains a future idea.
+
+**History and final delivery checks:** Export full commit IDs, author/commit dates, and complete messages for all fetched branches, with no patches/code, after the substantive submission-record commit. State the exact main and gh-pages cutoffs in commit-log.txt. Its containing metadata commit cannot include its own hash; GitHub retains that final history. Push main, compare remote/local HEAD and clean status, then download GitHub's main ZIP, compare its files with the committed tree, and run the extracted app over HTTP. Final push/archive results are reported in the finalization handoff; unchecked checklist entries above are retained wherever broader manual verification or that final handoff was not yet established at this snapshot. Actual submission remains the Developer's action.

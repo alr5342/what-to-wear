@@ -1,0 +1,36 @@
+{
+  "date": "2026-10-12",
+  "requiredFiles": [
+    "brief.md",
+    "research.md",
+    "spec.md",
+    "plan.md",
+    "debrief.md",
+    "README.md",
+    "index.html",
+    "styles.css",
+    "location-config.json",
+    "assets/art/prompts.md",
+    "assets/art/character-master.png",
+    "assets/licenses/lucide-ISC.txt",
+    "assets/licenses/nunito-OFL.txt",
+    "transcripts/research-2026-10-04_135319.md",
+    "transcripts/spec-2026-10-04_183138.md",
+    "transcripts/plan-2026-10-04_184244.md",
+    "transcripts/debrief-2026-10-12_224129.md"
+  ],
+  "visualReferences": 7,
+  "screenDrawings": 16,
+  "implementationTranscripts": 22,
+  "debrief": {
+    "file": "transcripts/debrief-2026-10-12_224129.md",
+    "checkedAgainstSession": true,
+    "allDiscussionMessagesPresent": true,
+    "disclosedOmission": "Subsequent file-path confirmation"
+  },
+  "unitTestsPassed": 30,
+  "publicReleaseChecksPassed": 52,
+  "minimumSampledTextContrast": 5.74,
+  "publicUrl": "https://alr5342.github.io/what-to-wear/",
+  "applicationChanges": false
+}
