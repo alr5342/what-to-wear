@@ -3,7 +3,7 @@ import * as ui from './ui.js';
 import { initDevTools } from './dev.js';
 import { createRecommendationStore } from './state.js';
 import { MOCK_LOCATION, MOCK_FORECASTS } from './mock.js';
-import { buildForecastDays, fetchNWSForecast, forecastForDate, fetchJSON } from './weather.js';
+import { buildForecastDays, fetchNWSForecast, forecastForDate, fetchJSON, selectForecastDay } from './weather.js';
 import { readSavedLocation, saveLocation, createGeocoder, getDeviceLocation } from './location.js';
 import { initShareActions } from './share.js';
 
@@ -21,6 +21,7 @@ const mockRecommendations = createRecommendationStore(storage);
 const liveRecommendations = createRecommendationStore(storage, { namespace: 'live' });
 let location = readSavedLocation(storage);
 let bundle = null;
+let forecastNotice = '';
 let pending = null;
 let requestVersion = 0;
 let geocoderPromise = null;
@@ -49,7 +50,7 @@ function render() {
     }
   }
   ui.renderTopBar({ locationName: view === 'firstrun' ? '' : selectedLocation()?.name, dateLabel: day.buttonLabel, isForecast: selectedDay > 0 });
-  $('weather-source').textContent = mockMode ? 'Mock forecast' : 'NWS forecast';
+  $('weather-source').textContent = mockMode ? 'Mock forecast' : `${forecastNotice ? forecastNotice + ' ' : ''}NWS forecast`;
   if (view !== 'loaded') ui.renderCharacter($('character'), []);
   ui.setView(view);
   ui.setCondition(view === 'loaded' ? state.condition : 'neutral');
@@ -102,6 +103,7 @@ async function changeLocation(resolveLocation, { dateIndex = selectedDay, messag
     leaveMockPreview();
     location = { ...next, name: next.name || 'Your location' };
     bundle = null;
+    forecastNotice = '';
     saveLocation(storage, location);
     liveRecommendations.retainLocation(location);
     render();
@@ -110,7 +112,9 @@ async function changeLocation(resolveLocation, { dateIndex = selectedDay, messag
     bundle = result;
     location = result.location;
     days = buildForecastDays(new Date(), result.timeZone);
-    selectedDay = dateIndex;
+    const selection = selectForecastDay(bundle, days, dateIndex);
+    selectedDay = selection.index;
+    forecastNotice = selection.notice;
     saveLocation(storage, location);
     $('search-input').value = '';
     $('search-status').textContent = '';
@@ -158,7 +162,10 @@ $('change-btn').addEventListener('click', () => openSelector());
 $('selector-done').addEventListener('click', () => {
   // Done submits typed input too, so entering a ZIP cannot be silently ignored.
   if ($('search-input').value.trim()) { submitSearch(); return; }
-  selectedDay = ui.getCheckedDateIndex();
+  const requested = ui.getCheckedDateIndex();
+  const selection = !mockMode && bundle ? selectForecastDay(bundle, days, requested) : { index: requested, notice: '' };
+  selectedDay = selection.index;
+  forecastNotice = selection.notice;
   $('selector').close();
   if (mockMode || bundle) view = 'loaded';
   render();

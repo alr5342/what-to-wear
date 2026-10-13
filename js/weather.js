@@ -123,3 +123,16 @@ export function forecastForDate(bundle, date) {
   if (!forecast) throw new WeatherError('unavailable', 'A complete daytime forecast is not available for this date. Choose another date or try again later.');
   return forecast;
 }
+
+/** An expired Today must not make a successful location lookup look broken.
+ * Keep later user-selected dates exact; never label a future forecast as Today.
+ */
+export function selectForecastDay(bundle, days, requestedIndex) {
+  if (requestedIndex === 0 && !bundle.daily.has(days[0].key)) {
+    const index = days.findIndex((day, i) => i > 0 && bundle.daily.has(day.key));
+    if (index > 0) return {
+      index, notice: `Today's daytime forecast is unavailable — showing ${days[index].buttonLabel}.`,
+    };
+  }
+  return { index: requestedIndex, notice: '' };
+}

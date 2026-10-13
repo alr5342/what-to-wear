@@ -84,11 +84,13 @@ export function analyzeForecast(forecast) {
   const situation = wet ? 'wet' : daytimeCold ? 'cold' : active.hydration ? 'hot'
     : outerwear ? 'jacket' : active.sun ? 'sunny' : 'mild';
   const eligible = {
-    top: warm ? ['tee', 'longsleeve'] : ['longsleeve', 'sweater'],
-    bottom: warm && !cold ? ['shorts', 'chinos'] : ['chinos', 'joggers'],
-    footwear: daytimeCold ? ['winterboots'] : wet ? [cold ? 'winterboots' : 'ankleboots']
-      : !warm || cold ? ['sneakers', 'ankleboots'] : ['sneakers'],
-    outerwear: outerwear ? [cold ? 'coat' : 'shell'] : [],
+    // Dress for the displayed daytime temperature; overnight lows still drive
+    // reminders/layers, without forcing heavy garments onto a warm afternoon.
+    top: warm ? ['tee'] : ['longsleeve', 'sweater'],
+    bottom: warm ? ['shorts', 'chinos', 'joggers'] : ['chinos', 'joggers'],
+    footwear: daytimeCold ? ['winterboots'] : wet ? [!warm && cold ? 'winterboots' : 'ankleboots']
+      : !warm ? ['sneakers', 'ankleboots'] : ['sneakers'],
+    outerwear: outerwear ? [!warm && cold ? 'coat' : 'shell'] : [],
     accessory: daytimeCold ? ['beanie'] : active.sun ? ['sunhat'] : [],
   };
   return { highF, lowF, windMph, feelsLikeF, condition, situation, active, eligible };
