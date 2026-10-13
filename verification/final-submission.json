@@ -32,5 +32,20 @@
   "publicReleaseChecksPassed": 52,
   "minimumSampledTextContrast": 5.74,
   "publicUrl": "https://alr5342.github.io/what-to-wear/",
-  "applicationChanges": false
+  "applicationChanges": false,
+  "archive": {
+    "substantiveCommit": "a44d422751a15d8e1a14aa9400629d7208f91986",
+    "files": 132,
+    "uncompressedBytes": 41845448,
+    "zippedBytes": 40590254,
+    "allFilesAndBytesMatch": true,
+    "extractedHttpChecksPassed": 52,
+    "finalMetadataArchiveRecheck": "Performed after final push; see handoff"
+  },
+  "commitLog": {
+    "commits": 11,
+    "mainCutoff": "a44d422751a15d8e1a14aa9400629d7208f91986",
+    "deploymentCutoff": "861404a97ce23887d58ad5e9d950743504c45783",
+    "containingCommitExcluded": true
+  }
 }

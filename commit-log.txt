@@ -1,0 +1,107 @@
+PROJECT 3 COMMIT LOG
+Main history recorded through: a44d422751a15d8e1a14aa9400629d7208f91986
+Deployment history recorded through: 861404a97ce23887d58ad5e9d950743504c45783
+Scope: all 11 unique commits reachable from fetched local/remote branches.
+Full commit IDs, author/commit dates, and full messages; no patches or code.
+The subsequent submission-metadata commit containing this export cannot include its own hash.
+That final commit remains available in the complete history on GitHub.
+
+Commit: a44d422751a15d8e1a14aa9400629d7208f91986
+Author date: 2026-10-12T22:51:17-05:00
+Commit date: 2026-10-12T22:51:17-05:00
+Finalize Project 3 debrief and submission records
+
+Preserve the completed debrief and finalization transcript. Reconcile specification, plan, and README status with approved peer improvements and Developer-reported sharing checks. Record required-file inventory, fresh verification, and remaining evidence limitations without application changes.
+
+
+Commit: 1f26ba58269ec461b3cecc6614af6abe822db22d
+Author date: 2026-10-12T21:53:09-05:00
+Commit date: 2026-10-12T21:53:09-05:00
+Record public verification of Checkpoint 6 deployment
+
+Verify deployed source equality, 47 controlled browser checks, and 24 real-provider checks including an actual missing-Today fallback. Update the obsolete live test expectation and record the deployment and fresh-chat debrief handoff. Save the cumulative implementation transcript; final debrief, commit log, and GitHub ZIP audit remain pending.
+
+
+Commit: 861404a97ce23887d58ad5e9d950743504c45783
+Author date: 2026-10-12T21:39:33-05:00
+Commit date: 2026-10-12T21:39:33-05:00
+Deploy approved Checkpoint 6 usability revision cbce6f9
+
+
+Commit: cbce6f9683470f587a6c2a8b61c2a4cfc35d2a97
+Author date: 2026-10-12T21:37:48-05:00
+Commit date: 2026-10-12T21:37:48-05:00
+Checkpoint 6: peer-supported warm outfits and Today forecast recovery
+
+Document the three brief peer reviews as reported aggregate findings and separate Developer decisions. Preserve the accepted artwork limitation. Use T-shirts with three real bottom combinations for warm weather, retain rain/wind/snow protection, and avoid insulated warm-day gear triggered only by overnight lows.
+
+When Today has no complete NWS period pair, select and explicitly label the next available real forecast; preserve explicit future selections. Record 24 targeted unit tests and 47 controlled browser checks, Developer approval, implementation transcripts, and the unchanged supplied debrief protocol. Debrief and final submission housekeeping remain pending.
+
+
+Commit: d3854f67bc7bc5ebbc69212b31df5139bd0b65ac
+Author date: 2026-10-12T21:10:19-05:00
+Commit date: 2026-10-12T21:10:19-05:00
+Checkpoint 5: release polish, GitHub Pages deployment, and package cleanup
+
+Complete About, privacy, method, and license content; fix enlarged-text action reflow and reference links. Add release documentation and public browser verification. Losslessly optimize PNGs and remove unused placeholders and redundant generated diagnostics while preserving required source artwork, references, and transcripts.
+
+Public HTTPS release passed 52 layout/accessibility checks and 23 real-provider checks. Record Developer approval, six-checkpoint completion plan, and cumulative implementation transcripts. Pages remains published from the separately approved gh-pages snapshot.
+
+
+Commit: e2c186d58a33d735fd1c2793d82326f86776ae8a
+Author date: 2026-10-12T20:50:45-05:00
+Commit date: 2026-10-12T20:50:45-05:00
+Fix action button reflow at enlarged text sizes
+
+
+Commit: 04c44ba1f5b31775572f23461542fd369d1d6b3a
+Author date: 2026-10-12T20:47:03-05:00
+Commit date: 2026-10-12T20:47:03-05:00
+Deploy Checkpoint 5 review snapshot to GitHub Pages
+
+
+Commit: 997036c3d2185c203e08c8cc9f256fbaefa6668d
+Author date: 2026-10-12T20:11:37-05:00
+Commit date: 2026-10-12T20:11:37-05:00
+Checkpoint 4: illustrated outfits and PNG sharing
+
+Integrate the approved generated wardrobe, shared rendering and colorways, native PNG sharing and download recovery. Correct garment fitting and gate all mock forecasts behind explicit development mode; retain source artwork and verification evidence.
+
+Record Developer approval as-is, including accepted residual clothing alignment limitations. Prepare the remaining two checkpoints for essential polish, Pages deployment, safe package optimization, peer testing, debrief, transcripts, commit log and GitHub ZIP submission. Save the cumulative implementation transcript.
+
+Validation: 28 unit tests, 138 controlled browser checks, and 23 live-provider browser checks passed during Checkpoint 4 verification. Documentation and archive-size audit only after approval; no additional artwork pass or file deletion.
+
+
+Commit: d753f48ca49ae8addf594ff1e7b14cc090cf4b07
+Author date: 2026-10-12T16:09:24-05:00
+Commit date: 2026-10-12T16:09:24-05:00
+Checkpoint 3: live location search and NWS weather
+
+
+Commit: 81e6f41ef590299f6360f4bef193b1480a162405
+Author date: 2026-10-12T15:00:57-05:00
+Commit date: 2026-10-12T15:00:57-05:00
+Checkpoint 2: weather-matched recommendations and approved interface
+
+
+Commit: ec95a08facc1e5ae985e23cbabbd8efb98a9d333
+Author date: 2026-10-05T19:08:12-05:00
+Commit date: 2026-10-05T19:08:12-05:00
+Checkpoint 1: static UI shell for every screen and state
+
+- index.html: Main (loaded, first run, loading, error, permission denied),
+  Location & date selector, Share/outfit card, Info/credits
+- styles.css: phone layout plus a distinct laptop layout at 800px+;
+  bottom sheets on phone, centered modals on laptop; weather-tinted themes
+- Phone "Change" button beside Share keeps location/date thumb-reachable (spec #18)
+- js/app.js + js/ui.js: wiring and rendering from placeholder sample data
+- js/dev.js: ?view / ?condition / ?dev preview override (gate before peer testing)
+- Layered placeholder character (assets/placeholder), self-hosted Nunito font,
+  Lucide icons; third-party licenses in assets/licenses
+- Docs: plan/spec/research revisions for this checkpoint; run notes in AGENTS.md
+
+Verified by the Developer on laptop and phone.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+
+
