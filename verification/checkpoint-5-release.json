@@ -1,0 +1,261 @@
+{
+  "url": "https://alr5342.github.io/what-to-wear/",
+  "checks": 52,
+  "contrast": [
+    {
+      "condition": "sunny",
+      "minimum": 7.118185452929834,
+      "samples": [
+        {
+          "label": "headline",
+          "ratio": 14.061086614166246
+        },
+        {
+          "label": "temp",
+          "ratio": 14.061086614166246
+        },
+        {
+          "label": "condition-label",
+          "ratio": 7.118185452929834
+        },
+        {
+          "label": "weather-source",
+          "ratio": 7.118185452929834
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 14.061086614166246
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 14.061086614166246
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 14.061086614166246
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 14.061086614166246
+        },
+        {
+          "label": "reminder",
+          "ratio": 15.331291789904915
+        },
+        {
+          "label": "change-btn",
+          "ratio": 15.864224026516732
+        },
+        {
+          "label": "share-btn",
+          "ratio": 15.864224026516732
+        }
+      ]
+    },
+    {
+      "condition": "cloudy",
+      "minimum": 6.526932557512385,
+      "samples": [
+        {
+          "label": "headline",
+          "ratio": 12.893140340735084
+        },
+        {
+          "label": "temp",
+          "ratio": 12.893140340735084
+        },
+        {
+          "label": "condition-label",
+          "ratio": 6.526932557512385
+        },
+        {
+          "label": "weather-source",
+          "ratio": 6.526932557512385
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.893140340735084
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.893140340735084
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.893140340735084
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.893140340735084
+        },
+        {
+          "label": "reminder reminder-none",
+          "ratio": 6.526932557512385
+        },
+        {
+          "label": "change-btn",
+          "ratio": 15.864224026516732
+        },
+        {
+          "label": "share-btn",
+          "ratio": 15.864224026516732
+        }
+      ]
+    },
+    {
+      "condition": "rain",
+      "minimum": 6.408478353792527,
+      "samples": [
+        {
+          "label": "headline",
+          "ratio": 12.659148851003462
+        },
+        {
+          "label": "temp",
+          "ratio": 12.659148851003462
+        },
+        {
+          "label": "condition-label",
+          "ratio": 6.408478353792527
+        },
+        {
+          "label": "weather-source",
+          "ratio": 6.408478353792527
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.659148851003462
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.659148851003462
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.659148851003462
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 12.659148851003462
+        },
+        {
+          "label": "reminder",
+          "ratio": 14.915605295469804
+        },
+        {
+          "label": "change-btn",
+          "ratio": 15.864224026516732
+        },
+        {
+          "label": "share-btn",
+          "ratio": 15.864224026516732
+        }
+      ]
+    },
+    {
+      "condition": "snow",
+      "minimum": 6.956138163214459,
+      "samples": [
+        {
+          "label": "headline",
+          "ratio": 13.74098242590842
+        },
+        {
+          "label": "temp",
+          "ratio": 13.74098242590842
+        },
+        {
+          "label": "condition-label",
+          "ratio": 6.956138163214459
+        },
+        {
+          "label": "weather-source",
+          "ratio": 6.956138163214459
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 13.74098242590842
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 13.74098242590842
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 13.74098242590842
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 13.74098242590842
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 13.74098242590842
+        },
+        {
+          "label": "reminder",
+          "ratio": 15.249819849654797
+        },
+        {
+          "label": "change-btn",
+          "ratio": 15.864224026516732
+        },
+        {
+          "label": "share-btn",
+          "ratio": 15.864224026516732
+        }
+      ]
+    },
+    {
+      "condition": "storm",
+      "minimum": 5.738653791736811,
+      "samples": [
+        {
+          "label": "headline",
+          "ratio": 11.335994060271677
+        },
+        {
+          "label": "temp",
+          "ratio": 11.335994060271677
+        },
+        {
+          "label": "condition-label",
+          "ratio": 5.738653791736811
+        },
+        {
+          "label": "weather-source",
+          "ratio": 5.738653791736811
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 11.335994060271677
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 11.335994060271677
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 11.335994060271677
+        },
+        {
+          "label": "wearing-item",
+          "ratio": 11.335994060271677
+        },
+        {
+          "label": "reminder",
+          "ratio": 14.498701495805111
+        },
+        {
+          "label": "change-btn",
+          "ratio": 15.864224026516732
+        },
+        {
+          "label": "share-btn",
+          "ratio": 15.864224026516732
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

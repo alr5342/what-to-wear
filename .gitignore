@@ -14,6 +14,13 @@ node_modules/
 npm-debug.log*
 # Chromium diagnostic output from local browser verification
 debug.log
+# Reproducible browser screenshots are local evidence, not submission assets.
+verification/*.png
+!verification/checkpoint-4-wardrobe.png
+!verification/checkpoint-4-card.png
+# Keep generated release archives and staging folders out of the source tree.
+.release/
+*.zip
 
 # Raw / working art files — commit only the final exported assets
 assets/_raw/

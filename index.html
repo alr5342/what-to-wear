@@ -194,28 +194,32 @@
         <svg class="icon icon-lg" aria-hidden="true"><use href="#i-user"/></svg>
         <div>
           <h2 id="info-creator">Creator</h2>
-          <p class="placeholder-text">Creator name and contact go here.</p>
+          <p id="creator-credit">Created by Alex Rosemann.</p>
         </div>
       </section>
       <section class="info-section" aria-labelledby="info-weather">
         <svg class="icon icon-lg" aria-hidden="true"><use href="#i-cloud"/></svg>
         <div>
           <h2 id="info-weather">Weather data</h2>
-          <p>Forecasts: <a href="https://www.weather.gov/documentation/services-web-api">National Weather Service</a>. City/ZIP lookup: Nominatim, <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>.</p>
+          <p>Forecasts: <a href="https://www.weather.gov/documentation/services-web-api">National Weather Service</a>. The temperature and description come from the selected day's daytime forecast; “Current” means today's forecast, not a live observation. Some dates may be unavailable when NWS has not supplied a complete daytime and following-night pair.</p>
+          <p>City/ZIP lookup: Nominatim, <a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors</a>. For ambiguous cities, include the state.</p>
         </div>
       </section>
       <section class="info-section" aria-labelledby="info-method">
         <svg class="icon icon-lg" aria-hidden="true"><use href="#i-file-text"/></svg>
         <div>
           <h2 id="info-method">How recommendations work</h2>
-          <p class="placeholder-text">Recommendation methods and sources go here.</p>
+          <p>We combine daytime temperature, the following night's low, wind, and rain or snow to choose clothing. Warm-weather options start at 70°F. Cooler, windy, or wet forecasts add suitable layers; cold and snow call for warmer clothing and footwear.</p>
+          <p>Each clothing item, color, headline, and reminder varies independently. Returning to a date restores your choices; if its forecast changes, unsuitable items are replaced.</p>
+          <p>Layering is informed by <a href="https://www.rei.com/learn/expert-advice/how-to-dress-in-cold-weather.html">REI's cold-weather clothing guide</a>; feels-like temperatures use the <a href="https://www.weather.gov/safety/cold-wind-chill-chart">NWS wind-chill formula</a> when applicable. The cutoffs are this app's simple recommendations, not personalized weather-safety advice. The sun reminder uses sunny conditions and temperature as a proxy, not a measured UV Index.</p>
         </div>
       </section>
       <section class="info-section" aria-labelledby="info-privacy">
         <svg class="icon icon-lg" aria-hidden="true"><use href="#i-lock"/></svg>
         <div>
           <h2 id="info-privacy">Privacy</h2>
-          <p>Your most recent location and outfit choices are stored in this browser. Submitted city/ZIP searches are sent to Nominatim; location coordinates are sent to the National Weather Service for forecasts. Device coordinates are not sent to Nominatim. This app has no account or server storing your location. <a href="https://osmfoundation.org/wiki/Privacy_Policy">OpenStreetMap privacy policy</a>.</p>
+          <p>Your most recent location and outfit choices are stored in this browser. Submitted city/ZIP searches are sent to Nominatim; location coordinates are sent to the National Weather Service for forecasts. Device coordinates are not sent to Nominatim. This app has no account, analytics, or app-controlled server storing your location. You can remove saved choices by clearing this site's browser data. If storage is unavailable, choices last only for the current tab.</p>
+          <p>GitHub Pages hosts the app; the hosting and weather/location services receive ordinary request information such as your IP address. Read the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub privacy statement</a> and <a href="https://osmfoundation.org/wiki/Privacy_Policy">OpenStreetMap privacy policy</a>.</p>
         </div>
       </section>
       <section class="info-section" aria-labelledby="info-art">
@@ -223,7 +227,7 @@
         <div>
           <h2 id="info-art">Art credits</h2>
           <p>Character, wardrobe, weather, and reminder illustrations generated with OpenAI image tools, guided by the project's character reference.</p>
-          <p>Interface icons: Lucide (ISC). Typeface: Nunito (SIL Open Font License). License notices ship with this app.</p>
+          <p>Interface icons: Lucide (<a href="assets/licenses/lucide-ISC.txt">ISC license</a>). Typeface: Nunito (<a href="assets/licenses/nunito-OFL.txt">SIL Open Font License</a>). License notices ship with this app.</p>
         </div>
       </section>
     </main>

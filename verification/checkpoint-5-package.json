@@ -1,0 +1,9 @@
+{
+    "archive":  ".release\\submission-preview-20261012-203603.zip",
+    "files":  117,
+    "uncompressedBytes":  41300510,
+    "zipBytes":  40418781,
+    "kind":  "Local candidate of current uncommitted release; approximate GitHub final ZIP, not a GitHub download",
+    "gitHead":  "997036c3d2185c203e08c8cc9f256fbaefa6668d",
+    "extractedSmoke":  "Passed: runtime assets/modules, phone render, PNG download, five About sections, no page/asset errors. Temporary staging removed afterward."
+}

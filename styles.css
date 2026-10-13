@@ -248,6 +248,7 @@ button { cursor: pointer; }
 .character {
   position: relative;
   height: min(100cqh, 360px);
+  max-width: 100%; /* Keep the existing illustration inside narrow/zoomed layouts. */
   aspect-ratio: 2 / 3;
 }
 .character .layer {
@@ -354,7 +355,7 @@ button { cursor: pointer; }
   margin-top: auto;
   padding-top: 4px;
 }
-.actions .btn { flex: 1; }
+.actions .btn { flex: 1; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
 
 /* ---------- First run / error / denied ---------- */
 
@@ -568,7 +569,9 @@ button:disabled { cursor: wait; opacity: 0.65; }
   border-bottom: 1px solid var(--line);
 }
 .info-section h2 { font-size: 1.15rem; font-weight: 900; margin-bottom: 4px; }
-.placeholder-text { color: var(--ink-soft); font-style: italic; }
+.info-section p + p { margin-top: 12px; }
+.info-section a { color: inherit; text-underline-offset: 3px; }
+.info-section > div { min-width: 0; overflow-wrap: anywhere; }
 
 /* ---------- Phone-only rules ---------- */
 

@@ -1,0 +1,232 @@
+[
+  {
+    "location": "New York, NY",
+    "date": "2026-10-13",
+    "forecastURL": "https://api.weather.gov/gridpoints/OKX/33,44/forecast",
+    "updated": "2026-10-12T18:47:38+00:00",
+    "forecast": {
+      "highF": 74,
+      "lowF": 67,
+      "windSpeed": "1 to 10 mph",
+      "precipProbability": 4,
+      "shortForecast": "Patchy Fog then Mostly Sunny",
+      "icon": "https://api.weather.gov/icons/land/day/fog/sct?size=medium"
+    },
+    "displayed": {
+      "temp": "74°F",
+      "condition": "Patchy Fog then Mostly Sunny"
+    },
+    "garments": [
+      {
+        "category": "footwear",
+        "id": "sneakers"
+      },
+      {
+        "category": "bottom",
+        "id": "shorts"
+      },
+      {
+        "category": "top",
+        "id": "longsleeve"
+      },
+      {
+        "category": "accessory",
+        "id": "sunhat"
+      }
+    ]
+  },
+  {
+    "location": "New York, NY",
+    "date": "2026-10-15",
+    "forecastURL": "https://api.weather.gov/gridpoints/OKX/33,44/forecast",
+    "updated": "2026-10-12T18:47:38+00:00",
+    "forecast": {
+      "highF": 67,
+      "lowF": 56,
+      "windSpeed": "5 to 10 mph",
+      "precipProbability": 2,
+      "shortForecast": "Sunny",
+      "icon": "https://api.weather.gov/icons/land/day/few?size=medium"
+    },
+    "displayed": {
+      "temp": "67°F",
+      "condition": "Sunny"
+    },
+    "garments": [
+      {
+        "category": "footwear",
+        "id": "ankleboots"
+      },
+      {
+        "category": "bottom",
+        "id": "joggers"
+      },
+      {
+        "category": "top",
+        "id": "longsleeve"
+      },
+      {
+        "category": "outerwear",
+        "id": "shell"
+      },
+      {
+        "category": "accessory",
+        "id": "sunhat"
+      }
+    ]
+  },
+  {
+    "location": "New York, NY",
+    "date": "2026-10-18",
+    "forecastURL": "https://api.weather.gov/gridpoints/OKX/33,44/forecast",
+    "updated": "2026-10-12T18:47:38+00:00",
+    "forecast": {
+      "highF": 58,
+      "lowF": 45,
+      "windSpeed": "10 mph",
+      "precipProbability": 2,
+      "shortForecast": "Sunny",
+      "icon": "https://api.weather.gov/icons/land/day/few?size=medium"
+    },
+    "displayed": {
+      "temp": "58°F",
+      "condition": "Sunny"
+    },
+    "garments": [
+      {
+        "category": "footwear",
+        "id": "sneakers"
+      },
+      {
+        "category": "bottom",
+        "id": "chinos"
+      },
+      {
+        "category": "top",
+        "id": "longsleeve"
+      },
+      {
+        "category": "outerwear",
+        "id": "coat"
+      }
+    ]
+  },
+  {
+    "location": "Austin, TX",
+    "date": "2026-10-12",
+    "forecastURL": "https://api.weather.gov/gridpoints/EWX/156,91/forecast",
+    "unavailable": true
+  },
+  {
+    "location": "Austin, TX",
+    "date": "2026-10-13",
+    "forecastURL": "https://api.weather.gov/gridpoints/EWX/156,91/forecast",
+    "updated": "2026-10-12T23:44:50+00:00",
+    "forecast": {
+      "highF": 94,
+      "lowF": 78,
+      "windSpeed": "5 to 10 mph",
+      "precipProbability": 11,
+      "shortForecast": "Partly Sunny",
+      "icon": "https://api.weather.gov/icons/land/day/bkn?size=medium"
+    },
+    "displayed": {
+      "temp": "94°F",
+      "condition": "Partly Sunny"
+    },
+    "garments": [
+      {
+        "category": "footwear",
+        "id": "sneakers"
+      },
+      {
+        "category": "bottom",
+        "id": "chinos"
+      },
+      {
+        "category": "top",
+        "id": "longsleeve"
+      },
+      {
+        "category": "accessory",
+        "id": "sunhat"
+      }
+    ]
+  },
+  {
+    "location": "Austin, TX",
+    "date": "2026-10-15",
+    "forecastURL": "https://api.weather.gov/gridpoints/EWX/156,91/forecast",
+    "updated": "2026-10-12T23:44:50+00:00",
+    "forecast": {
+      "highF": 92,
+      "lowF": 66,
+      "windSpeed": "5 mph",
+      "precipProbability": 2,
+      "shortForecast": "Mostly Sunny",
+      "icon": "https://api.weather.gov/icons/land/day/sct?size=medium"
+    },
+    "displayed": {
+      "temp": "92°F",
+      "condition": "Mostly Sunny"
+    },
+    "garments": [
+      {
+        "category": "footwear",
+        "id": "sneakers"
+      },
+      {
+        "category": "bottom",
+        "id": "shorts"
+      },
+      {
+        "category": "top",
+        "id": "longsleeve"
+      },
+      {
+        "category": "accessory",
+        "id": "sunhat"
+      }
+    ]
+  },
+  {
+    "location": "Austin, TX",
+    "date": "2026-10-18",
+    "forecastURL": "https://api.weather.gov/gridpoints/EWX/156,91/forecast",
+    "updated": "2026-10-12T23:44:50+00:00",
+    "forecast": {
+      "highF": 82,
+      "lowF": 60,
+      "windSpeed": "0 to 5 mph",
+      "precipProbability": 5,
+      "shortForecast": "Sunny",
+      "icon": "https://api.weather.gov/icons/land/day/few?size=medium"
+    },
+    "displayed": {
+      "temp": "82°F",
+      "condition": "Sunny"
+    },
+    "garments": [
+      {
+        "category": "footwear",
+        "id": "sneakers"
+      },
+      {
+        "category": "bottom",
+        "id": "shorts"
+      },
+      {
+        "category": "top",
+        "id": "tee"
+      },
+      {
+        "category": "outerwear",
+        "id": "shell"
+      },
+      {
+        "category": "accessory",
+        "id": "sunhat"
+      }
+    ]
+  }
+]

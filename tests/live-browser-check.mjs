@@ -10,6 +10,7 @@ import { buildForecastDays, normalizePeriods } from '../js/weather.js';
 
 const { chromium } = await import(pathToFileURL(resolve(process.argv[2])).href);
 const live = process.argv.includes('--live');
+const evidencePrefix = process.argv.find((arg) => arg.startsWith('--evidence='))?.slice(11) ?? 'checkpoint-4';
 const root = resolve('.');
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.css': 'text/css', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
 const server = createServer(async (request, response) => {
@@ -20,7 +21,7 @@ const server = createServer(async (request, response) => {
   catch { response.writeHead(404).end(); }
 });
 await new Promise((done) => server.listen(0, '127.0.0.1', done));
-const origin = `http://127.0.0.1:${server.address().port}`;
+const origin = (process.argv.find((arg) => arg.startsWith('--url='))?.slice(6) ?? `http://127.0.0.1:${server.address().port}`).replace(/\/$/, '');
 let browser;
 let checks = 0;
 const errors = [];
@@ -111,6 +112,15 @@ try {
   browser = await chromium.launch({ headless: true });
   const ctx = await context();
   const page = await ctx.newPage();
+  const settleLiveForecast = async () => {
+    await page.waitForFunction(() => !['loading', 'firstrun'].includes(document.querySelector('#main').dataset.view));
+    if (await page.locator('#main').getAttribute('data-view') === 'error') {
+      check(/complete daytime forecast/.test(await page.locator('#error-detail').textContent()), 'expired today is reported honestly');
+      await page.locator('.view-error [data-action=search]').click();
+      await page.locator('.chip').nth(1).click(); await page.locator('#selector-done').click();
+    }
+    await view(page, 'loaded');
+  };
   const liveResponses = [];
   if (live) page.on('response', (response) => {
     if (response.url().startsWith('https://api.weather.gov/gridpoints/') && response.url().endsWith('/forecast')) {
@@ -123,14 +133,7 @@ try {
   check(!/Austin/.test(await page.locator('#location-name').textContent()), 'fresh live app has no Austin default');
   check(requests.length === 0, 'first run makes no provider calls before a location is chosen');
   await search(page, '10001', 'Enter');
-  if (live) {
-    await page.waitForFunction(() => !['loading', 'firstrun'].includes(document.querySelector('#main').dataset.view));
-    if (await page.locator('#main').getAttribute('data-view') === 'error') {
-      check(/complete daytime forecast/.test(await page.locator('#error-detail').textContent()), 'expired today is reported honestly');
-      await page.locator('.view-error [data-action=search]').click();
-      await page.locator('.chip').nth(1).click(); await page.locator('#selector-done').click();
-    }
-  }
+  if (live) await settleLiveForecast();
   await view(page, 'loaded');
   check(await page.locator('#location-name').textContent() === 'New York, NY', 'ZIP selects New York');
   check(await page.locator('#weather-source').textContent() === 'NWS forecast', 'live source label');
@@ -144,8 +147,19 @@ try {
       const dates = buildForecastDays(new Date(), zone);
       for (const index of indexes) {
         await page.locator('#change-btn').click(); await page.locator('.chip').nth(index).click();
-        await page.locator('#selector-done').click(); await view(page, 'loaded');
+        await page.locator('#selector-done').click();
         const expected = daily.get(dates[index].key);
+        if (!expected) {
+          await view(page, 'error');
+          check(/complete daytime forecast/.test(await page.locator('#error-detail').textContent()), 'unavailable selected date is explicitly reported');
+          evidence.push({ location: await page.locator('#location-name').textContent(), date: dates[index].key, forecastURL: response.url, unavailable: true });
+          // Reopen the same selector via the error state's recovery control.
+          await page.locator('.view-error [data-action=search]').click();
+          const availableIndex = dates.findIndex((date) => daily.has(date.key));
+          await page.locator('.chip').nth(availableIndex).click(); await page.locator('#selector-done').click();
+          continue;
+        }
+        await view(page, 'loaded');
         const actual = await snapshot(page);
         check(actual.temp === `${expected.highF}\u00b0F` && actual.condition === expected.shortForecast, 'selected date matches the actual NWS response exactly');
         const garments = await page.locator('#character [data-item]').evaluateAll((nodes) => nodes.map((node) => ({ category: node.className.split('layer-')[1], id: node.dataset.item })));
@@ -158,17 +172,17 @@ try {
     };
     await verifyDates('America/New_York', [1, 3, 6]);
     await page.locator('#character[data-art-ready="true"]').waitFor();
-    await page.screenshot({ path: 'verification/checkpoint-4-live-new-york.png' });
+    await page.screenshot({ path: `verification/${evidencePrefix}-live-new-york.png` });
     console.log('LIVE ZIP:', JSON.stringify(await snapshot(page), (key, value) => key === 'outfit' ? undefined : value));
     await search(page, 'Austin, TX', 'Done'); await view(page, 'loaded');
     check(await page.locator('#location-name').textContent() === 'Austin, TX', 'live city search applies through Done');
     await verifyDates('America/Chicago', [0, 1, 3, 6]);
     console.log('LIVE CITY:', JSON.stringify(await snapshot(page), (key, value) => key === 'outfit' ? undefined : value));
-    await page.reload(); await view(page, 'loaded');
+    await page.reload(); await settleLiveForecast();
     check(await page.locator('#location-name').textContent() === 'Austin, TX', 'live city survives reload');
     await page.locator('#character[data-art-ready="true"]').waitFor();
-    await page.screenshot({ path: 'verification/checkpoint-4-live-austin.png' });
-    await writeFile('verification/checkpoint-4-live-weather.json', JSON.stringify(evidence, null, 2) + '\n');
+    await page.screenshot({ path: `verification/${evidencePrefix}-live-austin.png` });
+    await writeFile(`verification/${evidencePrefix}-live-weather.json`, JSON.stringify(evidence, null, 2) + '\n');
     check(errors.length === 0, `no live page errors: ${errors.join('; ')}`);
     console.log(`Live provider/browser smoke: ${checks} checks passed.`);
   } else {
@@ -231,8 +245,8 @@ try {
     await page.reload(); await view(page, 'loaded');
     await page.evaluate(() => document.fonts.ready);
     const worst = await page.evaluate(async ({ HEADLINES, REMINDERS }) => {
-      const { createRecommendation } = await import('/js/state.js');
-      const { renderLoaded } = await import('/js/ui.js');
+      const { createRecommendation } = await import('./js/state.js');
+      const { renderLoaded } = await import('./js/ui.js');
       const state = createRecommendation({ highF: 90, lowF: 40, windSpeed: 15, precipProbability: 70, shortForecast: 'Slight Chance Showers And Thunderstorms then Mostly Sunny' }, {
         location: { name: 'New York, NY', lat: 40.7485569, lon: -73.9940252 }, date: '2026-10-12', today: '2026-10-12', random: () => 0,
       });

@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
-  <!-- Placeholder Accessory layer (baseball cap). -->
-  <g stroke="#2b2622" stroke-width="3" stroke-linejoin="round" fill="#2a9d8f">
-    <path d="M118 40 Q142 37 154 44 Q142 50 118 47 Z"/>
-    <path d="M69 44 Q69 14 100 14 Q131 14 131 44 Z"/>
-  </g>
-  <circle cx="100" cy="15" r="3.5" fill="#2b2622"/>
-</svg>

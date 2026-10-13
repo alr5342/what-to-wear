@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 300">
-  <!-- Placeholder Top layer (t-shirt). -->
-  <g stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <path d="M70 100 L62 134 M130 100 L138 134" stroke="#2b2622" stroke-width="27"/>
-    <path d="M70 100 L62 134 M130 100 L138 134" stroke="#ff7a59" stroke-width="21"/>
-  </g>
-  <rect x="66" y="87" width="68" height="95" rx="18" fill="#ff7a59" stroke="#2b2622" stroke-width="3"/>
-  <path d="M88 88 Q100 101 112 88" fill="none" stroke="#2b2622" stroke-width="3" stroke-linecap="round"/>
-</svg>
