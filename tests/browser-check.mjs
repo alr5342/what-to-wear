@@ -28,11 +28,12 @@ const snapshot = (page) => page.evaluate(() => ({
   headline: document.querySelector('#headline').textContent,
   wearing: document.querySelector('#wearing-list').textContent,
   reminders: document.querySelector('#reminder-list').textContent,
-  garments: [...document.querySelectorAll('#character svg.layer')].map((node) => [node.dataset.item, node.dataset.color]),
+  garments: [...document.querySelectorAll('#character [data-item]')].map((node) => [node.dataset.item, node.dataset.color]),
 }));
 async function loaded(page) {
   await page.locator('#headline').filter({ hasText: /\S/ }).waitFor();
   await page.evaluate(() => document.fonts.ready);
+  await page.locator('#character[data-art-ready="true"]').waitFor();
 }
 
 try {
@@ -151,14 +152,14 @@ try {
 
   // Existing shell states must retain a neutral base silhouette.
   for (const view of ['firstrun', 'loading', 'error', 'denied']) {
-    await page.goto(`${origin}/?view=${view}&condition=snow`);
+    await page.goto(`${origin}/?dev&view=${view}&condition=snow`);
     await page.waitForFunction((value) => document.querySelector('#main').dataset.view === value, view);
     check(await page.locator('body').getAttribute('data-condition') === 'neutral', `${view} neutral theme`);
-    check(await page.locator('#character svg.layer').first().isVisible() === false, `${view} hides garments`);
+    check(await page.locator('#character').evaluate((node) => getComputedStyle(node).opacity === '0.2'), `${view} shows muted illustration`);
   }
   await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto(`${origin}/?condition=snow`); await loaded(page);
-  check(await page.locator('.devbar').count() === 0, 'normal preview hides developer controls');
+  await page.goto(`${origin}/?dev&condition=snow`); await loaded(page);
+  check(await page.locator('.devbar').count() === 1, 'explicit dev preview exposes developer controls');
   const columns = await page.evaluate(() => ({
     characterRight: document.querySelector('.stage').getBoundingClientRect().right,
     panelLeft: document.querySelector('.panel').getBoundingClientRect().left,

@@ -1,24 +1,10 @@
 // DOM rendering for every screen and state. Nothing here decides *what* to
 // show — callers pass in display data and this module only paints it.
 
-import { garmentLayer } from './placeholder-art.js';
+import { renderIllustration, illustratedIcon } from './art.js';
 
 const $ = (id) => document.getElementById(id);
 
-// Drawing order for the layered character, bottom to top.
-const LAYER_ORDER = ['base', 'bottom', 'footwear', 'top', 'outerwear', 'accessory'];
-
-const BASE_SRC = 'assets/placeholder/base.svg';
-
-// Icon sprite ids (see the <svg> sprite in index.html).
-const CONDITION_ICON = {
-  sunny: 'sun',
-  cloudy: 'cloud',
-  rain: 'cloud-rain',
-  snow: 'snowflake',
-  storm: 'cloud-lightning',
-};
-const REMINDER_ICON = { umbrella: 'umbrella', sun: 'sun', hydration: 'droplet', cold: 'thermometer' };
 const CATEGORY_ICON = { top: 'shirt', bottom: 'pants', footwear: 'shoe', outerwear: 'jacket', accessory: 'cap' };
 
 const STATUS_TEXT = {
@@ -43,19 +29,7 @@ export function icon(name, className = 'icon') {
 
 /** Stacks the base layer plus one layer per worn category. */
 export function renderCharacter(container, wearing) {
-  const worn = new Set(wearing.map((item) => item.category));
-  const layers = LAYER_ORDER
-    .filter((layer) => layer === 'base' || worn.has(layer))
-    .map((layer) => {
-      if (layer !== 'base') return garmentLayer(wearing.find((item) => item.category === layer));
-      const img = document.createElement('img');
-      img.src = BASE_SRC;
-      img.alt = '';
-      img.className = `layer layer-${layer}`;
-      img.draggable = false;
-      return img;
-    });
-  container.replaceChildren(...layers);
+  renderIllustration(container, wearing);
 
   const list = wearing.map((item) => `${item.colorName} ${item.label}`.toLowerCase());
   const described = list.length > 1
@@ -68,7 +42,7 @@ export function renderCharacter(container, wearing) {
 export function renderLoaded(data) {
   $('headline').textContent = data.headline.text;
 
-  $('condition-icon').replaceChildren(icon(CONDITION_ICON[data.condition]));
+  $('condition-icon').replaceChildren(illustratedIcon(data.condition));
   $('temp').textContent = `${data.tempF}°F`;
   // Only show "feels like" when it actually differs from the temperature.
   $('feels').textContent = data.feelsLikeF !== data.tempF ? `(feels ${data.feelsLikeF}°F)` : '';
@@ -92,7 +66,7 @@ export function renderLoaded(data) {
     ? activeReminders.map((reminder) => {
       const li = document.createElement('li');
       li.className = 'reminder';
-      li.append(icon(REMINDER_ICON[reminder.type]), reminder.text);
+      li.append(illustratedIcon(reminder.type), reminder.text);
       return li;
     })
     : [Object.assign(document.createElement('li'), {
@@ -106,7 +80,7 @@ export function renderLoaded(data) {
   // Share card mirrors the same data (spec #13).
   renderCharacter($('share-character'), data.wearing);
   $('share-headline').textContent = data.headline.text;
-  $('share-icon').replaceChildren(icon(CONDITION_ICON[data.condition]));
+  $('share-icon').replaceChildren(illustratedIcon(data.condition));
   $('share-temp-value').textContent = `${data.tempF}°F`;
   $('share-condition').textContent = data.conditionLabel;
   $('share-location').textContent = data.location.name;

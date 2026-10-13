@@ -2,10 +2,11 @@
 // intercepted here; use --live for a small, sequential real-provider smoke check.
 import assert from 'node:assert/strict';
 import { createServer } from 'node:http';
-import { readFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { resolve, extname, sep } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { HEADLINES, REMINDERS } from '../js/state.js';
+import { HEADLINES, REMINDERS, analyzeForecast } from '../js/state.js';
+import { buildForecastDays, normalizePeriods } from '../js/weather.js';
 
 const { chromium } = await import(pathToFileURL(resolve(process.argv[2])).href);
 const live = process.argv.includes('--live');
@@ -110,25 +111,69 @@ try {
   browser = await chromium.launch({ headless: true });
   const ctx = await context();
   const page = await ctx.newPage();
-  await page.goto(origin); await view(page, 'firstrun');
+  const liveResponses = [];
+  if (live) page.on('response', (response) => {
+    if (response.url().startsWith('https://api.weather.gov/gridpoints/') && response.url().endsWith('/forecast')) {
+      liveResponses.push(response.json().then((json) => ({ url: response.url(), json })));
+    }
+  });
+  // Old preview links cannot turn ordinary browsing into invented weather.
+  const unguarded = '?mock&view=loaded&condition=snow&high=-50&low=-60&wind=80&precip=100';
+  await page.goto(origin + unguarded); await view(page, 'firstrun');
   check(!/Austin/.test(await page.locator('#location-name').textContent()), 'fresh live app has no Austin default');
   check(requests.length === 0, 'first run makes no provider calls before a location is chosen');
-  await search(page, '10001', 'Enter'); await view(page, 'loaded');
+  await search(page, '10001', 'Enter');
+  if (live) {
+    await page.waitForFunction(() => !['loading', 'firstrun'].includes(document.querySelector('#main').dataset.view));
+    if (await page.locator('#main').getAttribute('data-view') === 'error') {
+      check(/complete daytime forecast/.test(await page.locator('#error-detail').textContent()), 'expired today is reported honestly');
+      await page.locator('.view-error [data-action=search]').click();
+      await page.locator('.chip').nth(1).click(); await page.locator('#selector-done').click();
+    }
+  }
+  await view(page, 'loaded');
   check(await page.locator('#location-name').textContent() === 'New York, NY', 'ZIP selects New York');
   check(await page.locator('#weather-source').textContent() === 'NWS forecast', 'live source label');
   check(await page.locator('#temp').textContent() !== '', 'live temperature renders');
   if (live) {
+    await mkdir('verification', { recursive: true });
+    const evidence = [];
+    const verifyDates = async (zone, indexes) => {
+      const response = await liveResponses.at(-1);
+      const daily = normalizePeriods(response.json.properties.periods);
+      const dates = buildForecastDays(new Date(), zone);
+      for (const index of indexes) {
+        await page.locator('#change-btn').click(); await page.locator('.chip').nth(index).click();
+        await page.locator('#selector-done').click(); await view(page, 'loaded');
+        const expected = daily.get(dates[index].key);
+        const actual = await snapshot(page);
+        check(actual.temp === `${expected.highF}\u00b0F` && actual.condition === expected.shortForecast, 'selected date matches the actual NWS response exactly');
+        const garments = await page.locator('#character [data-item]').evaluateAll((nodes) => nodes.map((node) => ({ category: node.className.split('layer-')[1], id: node.dataset.item })));
+        const eligible = analyzeForecast(expected).eligible;
+        check(garments.every((item) => eligible[item.category]?.includes(item.id)), 'outfit categories match rules for this actual forecast');
+        evidence.push({ location: await page.locator('#location-name').textContent(), date: dates[index].key,
+          forecastURL: response.url, updated: response.json.properties.updateTime,
+          forecast: expected, displayed: { temp: actual.temp, condition: actual.condition }, garments });
+      }
+    };
+    await verifyDates('America/New_York', [1, 3, 6]);
+    await page.locator('#character[data-art-ready="true"]').waitFor();
+    await page.screenshot({ path: 'verification/checkpoint-4-live-new-york.png' });
     console.log('LIVE ZIP:', JSON.stringify(await snapshot(page), (key, value) => key === 'outfit' ? undefined : value));
     await search(page, 'Austin, TX', 'Done'); await view(page, 'loaded');
     check(await page.locator('#location-name').textContent() === 'Austin, TX', 'live city search applies through Done');
+    await verifyDates('America/Chicago', [0, 1, 3, 6]);
     console.log('LIVE CITY:', JSON.stringify(await snapshot(page), (key, value) => key === 'outfit' ? undefined : value));
     await page.reload(); await view(page, 'loaded');
     check(await page.locator('#location-name').textContent() === 'Austin, TX', 'live city survives reload');
-    await mkdir('verification', { recursive: true });
-    await page.screenshot({ path: 'verification/checkpoint-3-live-phone.png' });
+    await page.locator('#character[data-art-ready="true"]').waitFor();
+    await page.screenshot({ path: 'verification/checkpoint-4-live-austin.png' });
+    await writeFile('verification/checkpoint-4-live-weather.json', JSON.stringify(evidence, null, 2) + '\n');
     check(errors.length === 0, `no live page errors: ${errors.join('; ')}`);
     console.log(`Live provider/browser smoke: ${checks} checks passed.`);
   } else {
+    await page.goto(origin + unguarded); await view(page, 'loaded');
+    check(await page.locator('#weather-source').textContent() === 'NWS forecast' && await page.locator('.devbar').count() === 0, 'all preview overrides are ignored without dev, including with a saved location');
     check(await page.locator('#temp').textContent() === '73°F', 'NY temperature comes from its forecast');
     check(await page.locator('#condition-label').textContent() === 'Sunny', 'exact NWS short forecast displays');
     check(!/Waterproof boots/.test(await page.locator('#wearing-list').textContent()), 'dry NY outfit uses dry footwear');

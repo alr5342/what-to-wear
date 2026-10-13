@@ -5,10 +5,11 @@ import { createRecommendationStore } from './state.js';
 import { MOCK_LOCATION, MOCK_FORECASTS } from './mock.js';
 import { buildForecastDays, fetchNWSForecast, forecastForDate, fetchJSON } from './weather.js';
 import { readSavedLocation, saveLocation, createGeocoder, getDeviceLocation } from './location.js';
+import { initShareActions } from './share.js';
 
 const $ = (id) => document.getElementById(id);
 const params = new URLSearchParams(window.location.search);
-let mockMode = ['mock', 'view', 'condition', 'high', 'low', 'wind', 'precip', 'weather'].some((key) => params.has(key));
+let mockMode = params.has('dev') && ['mock', 'view', 'condition', 'high', 'low', 'wind', 'precip', 'weather'].some((key) => params.has(key));
 let days = buildForecastDays();
 let selectedDay = 0;
 let forecastOverride = null;
@@ -25,6 +26,7 @@ let requestVersion = 0;
 let geocoderPromise = null;
 let view = mockMode ? 'loaded' : location ? 'loading' : 'firstrun';
 let devTools;
+const shareActions = initShareActions();
 
 const currentForecast = () => mockMode ? forecastOverride ?? MOCK_FORECASTS[selectedDay] : forecastForDate(bundle, days[selectedDay].key);
 const recommendations = () => mockMode ? mockRecommendations : liveRecommendations;
@@ -38,7 +40,9 @@ function render() {
     try {
       forecast = currentForecast();
       state = recommendations().get(forecast, { location: selectedLocation(), date: day.key, today: days[0].key });
-      ui.renderLoaded({ ...state, dateLong: day.long });
+      const display = { ...state, dateLong: day.long };
+      ui.renderLoaded(display);
+      shareActions.update(display);
     } catch (error) {
       view = 'error';
       $('error-detail').textContent = error.message;
@@ -160,8 +164,7 @@ $('selector-done').addEventListener('click', () => {
   render();
 });
 $('search-form').addEventListener('submit', (event) => { event.preventDefault(); submitSearch(); });
-$('share-btn').addEventListener('click', () => $('share-dialog').showModal());
-// Native Share and PNG download arrive in their own checkpoint.
+$('share-btn').addEventListener('click', () => shareActions.open());
 
 document.addEventListener('click', (event) => {
   const action = event.target.closest('[data-action]')?.dataset.action;

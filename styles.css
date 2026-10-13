@@ -260,12 +260,8 @@ button { cursor: pointer; }
   -webkit-user-drag: none;
 }
 
-/* Every non-loaded view shows a silhouette of the base character only. */
-.main:not([data-view="loaded"]) .character .layer:not(.layer-base) { display: none; }
-.main:not([data-view="loaded"]) .character img.layer-base {
-  filter: brightness(0);
-  opacity: 0.13;
-}
+/* Non-loaded states show a complete, muted illustration without suggesting weather. */
+.main:not([data-view="loaded"]) .character { filter: grayscale(1); opacity: 0.2; }
 .main:not([data-view="loaded"]) .stage::before { opacity: 0.5; }
 
 /* Phone error / denied drawings replace the character with a large icon. */
@@ -536,6 +532,11 @@ button:disabled { cursor: wait; opacity: 0.65; }
 .share-temp { display: flex; align-items: center; gap: 8px; font-size: 1.3rem; font-weight: 900; }
 .share-temp .icon { width: 32px; height: 32px; }
 .share-meta { color: var(--ink-soft); font-weight: 800; }
+.icon { object-fit: contain; }
+.share-status { margin: 10px 0 0; min-height: 1.4em; color: var(--ink-soft); font-size: .85rem; text-align: center; }
+@media (max-width: 799.98px) {
+  #share-download.share-fallback { display: flex !important; }
+}
 
 /* ---------- Info screen ---------- */
 

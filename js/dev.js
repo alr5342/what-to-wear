@@ -7,6 +7,8 @@ export const CONDITIONS = ['sunny', 'cloudy', 'rain', 'snow', 'storm'];
 
 export function initDevTools({ onView, onForecast, onReroll }) {
   const params = new URLSearchParams(window.location.search);
+  // Preview URLs must never inject invented data into ordinary browsing.
+  if (!params.has('dev')) return { view: null, forecast: null, update() {} };
   const view = VIEWS.includes(params.get('view')) ? params.get('view') : null;
   let forecast = CONDITION_DEFAULTS[params.get('condition')] ?? null;
   const hasWeatherInputs = ['high', 'low', 'wind', 'precip', 'weather'].some((name) => params.has(name));
@@ -21,7 +23,6 @@ export function initDevTools({ onView, onForecast, onReroll }) {
     if (params.get('weather') === 'mixed') candidate.shortForecast = 'Rain and snow';
     if (candidate.lowF <= candidate.highF) forecast = candidate;
   }
-  if (!params.has('dev')) return { view, forecast, update() {} };
   const bar = document.createElement('details');
   bar.className = 'devbar';
   bar.innerHTML = '<summary>dev preview · mock weather</summary>';

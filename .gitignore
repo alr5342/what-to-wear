@@ -12,6 +12,8 @@ desktop.ini
 # Node tooling, if ever used locally (the app itself has no build step)
 node_modules/
 npm-debug.log*
+# Chromium diagnostic output from local browser verification
+debug.log
 
 # Raw / working art files — commit only the final exported assets
 assets/_raw/
