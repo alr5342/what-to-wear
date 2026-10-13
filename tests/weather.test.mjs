@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { buildForecastDays, normalizePeriods, fetchNWSForecast, fetchJSON, forecastForDate } from '../js/weather.js';
+import { buildForecastDays, normalizePeriods, fetchNWSForecast, fetchJSON, forecastForDate, selectForecastDay } from '../js/weather.js';
 
 function periods({ high = 72, low = 48, probability = 40 } = {}) {
   return [
@@ -72,4 +72,19 @@ test('HTTP failures, malformed JSON and timeouts fail without a mock fallback', 
     timeoutMs: 5,
     fetchImpl: async (_, { signal }) => new Promise((resolve, reject) => signal.addEventListener('abort', () => reject(new Error('Aborted')), { once: true })),
   }), /Unable to reach/);
+});
+
+test('Today fallback selects the first available real day and leaves future selections exact', () => {
+  const days=buildForecastDays(new Date('2026-10-12T20:00:00Z'),'America/New_York');
+  const daily=normalizePeriods(periods());
+  assert.deepEqual(selectForecastDay({daily},days,0),{index:0,notice:''});
+  daily.delete(days[0].key);
+  daily.set(days[2].key,{highF:74,lowF:60});
+  const fallback=selectForecastDay({daily},days,0);
+  assert.equal(fallback.index,2); assert.match(fallback.notice,/Today.*unavailable.*Wed/);
+  assert.equal(forecastForDate({daily},days[fallback.index].key).highF,74);
+  assert.deepEqual(selectForecastDay({daily},days,2),{index:2,notice:''});
+  assert.equal(selectForecastDay({daily},days,1).index,1);
+  assert.throws(()=>forecastForDate({daily},days[1].key),/Choose another date/);
+  assert.deepEqual(selectForecastDay({daily:new Map()},days,0),{index:0,notice:''});
 });

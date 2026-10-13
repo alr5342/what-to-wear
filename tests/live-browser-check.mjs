@@ -136,7 +136,7 @@ try {
   if (live) await settleLiveForecast();
   await view(page, 'loaded');
   check(await page.locator('#location-name').textContent() === 'New York, NY', 'ZIP selects New York');
-  check(await page.locator('#weather-source').textContent() === 'NWS forecast', 'live source label');
+  check((await page.locator('#weather-source').textContent()).endsWith('NWS forecast'), 'live source label permits an explicit Today fallback notice');
   check(await page.locator('#temp').textContent() !== '', 'live temperature renders');
   if (live) {
     await mkdir('verification', { recursive: true });
@@ -235,11 +235,10 @@ try {
     await page.locator('[data-action=retry]').click(); await view(page, 'loaded');
     check(await page.locator('#temp').textContent() === '73°F', 'Retry refetches actual forecast');
     missingToday = true;
-    await page.reload(); await view(page, 'error');
-    check(/Choose another date/.test(await page.locator('#error-detail').textContent()), 'expired daytime period is reported rather than replaced');
-    await page.locator('.view-error [data-action=search]').click();
-    await page.locator('.chip').nth(1).click(); await page.locator('#selector-done').click(); await view(page, 'loaded');
-    check(await page.locator('#temp').textContent() === '72°F', 'another date recovers from missing daytime forecast');
+    await page.reload(); await view(page, 'loaded');
+    check(await page.locator('#temp').textContent() === '72\u00b0F', 'expired Today automatically uses the next actual NWS day');
+    check(/Today.*unavailable.*Tue/.test(await page.locator('#weather-source').textContent()), 'fallback clearly explains the date change');
+    check(await page.locator('#date-label').textContent() !== 'Today', 'future fallback is never labeled Today');
     missingToday = false;
     longForecast = true;
     await page.reload(); await view(page, 'loaded');
@@ -277,6 +276,17 @@ try {
     await device.locator('[data-action=retry]').click(); await view(device, 'loaded');
     check(await device.locator('#location-name').textContent() === 'New York, NY', 'device coordinates get an NWS place label');
     check(requests.filter((url) => url.includes('nominatim')).length === searches, 'device coordinates are not sent to Nominatim');
+    check(await device.locator('#temp').textContent() === '73\u00b0F', 'device location loads available Today');
+    missingToday = true;
+    await device.locator('#change-btn').click(); await device.locator('.chip').first().click();
+    await device.locator('#selector [data-action=geolocate]').click(); await view(device, 'loaded');
+    check(await device.locator('#temp').textContent() === '72\u00b0F', 'device location with expired Today loads next actual forecast');
+    check(/Today.*unavailable/.test(await device.locator('#weather-source').textContent()), 'device fallback is explicit');
+    await device.locator('#change-btn').click(); await device.locator('.chip').nth(3).click();
+    await device.locator('#selector [data-action=geolocate]').click(); await view(device, 'loaded');
+    check(await device.locator('#temp').textContent() === '70\u00b0F', 'device location preserves requested future day');
+    check(await device.locator('#weather-source').textContent() === 'NWS forecast', 'explicit future selection clears fallback notice');
+    missingToday = false;
     await allowed.close();
     const deniedContext = await context();
     const denied = await deniedContext.newPage(); await denied.goto(origin); await view(denied, 'firstrun');

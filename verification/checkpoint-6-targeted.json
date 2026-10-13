@@ -1,0 +1,33 @@
+{
+  "checkpoint": 6,
+  "status": "uncommitted review candidate",
+  "unit": {
+    "command": "node --test tests/state.test.mjs tests/weather.test.mjs",
+    "passed": 24,
+    "weatherGridForecasts": 4800,
+    "minimumGarmentCombinations": 3
+  },
+  "browser": {
+    "suite": "tests/live-browser-check.mjs",
+    "mode": "controlled provider responses; Chromium",
+    "passed": 47,
+    "coverage": [
+      "device location with available Today",
+      "device location with missing Today and explicit next-date fallback",
+      "device location with selected future day",
+      "warm/rainy outfit eligibility",
+      "reload, retry and permission-denied recovery"
+    ],
+    "worstPhoneFit": {
+      "viewport": "375x667",
+      "actionBottom": 658.21875,
+      "horizontalOverflow": false
+    }
+  },
+  "limitations": [
+    "No new live-provider run or physical-device verification",
+    "Known artwork alignment remains accepted",
+    "Public deployment still approved Checkpoint 5"
+  ],
+  "artworkChanged": false
+}

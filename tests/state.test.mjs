@@ -24,8 +24,8 @@ test('wind ranges, calm/missing input, and wind-chill validity limits', () => {
 
 test('exact boundaries: warm 70, coat low 45, shell low 60, wind 15, precipitation 40, sun 60, hot 85', () => {
   assert.deepEqual(analyze({ highF: 69.9 }).eligible.top, ['longsleeve', 'sweater']);
-  assert.deepEqual(analyze({ highF: 70 }).eligible.top, ['tee', 'longsleeve']);
-  assert.deepEqual(analyze({ lowF: 45 }).eligible.outerwear, ['coat']);
+  assert.deepEqual(analyze({ highF: 70 }).eligible.top, ['tee']);
+  assert.deepEqual(analyze({ highF: 65, lowF: 45 }).eligible.outerwear, ['coat']);
   assert.deepEqual(analyze({ lowF: 45.1 }).eligible.outerwear, ['shell']);
   assert.deepEqual(analyze({ lowF: 60 }).eligible.outerwear, ['shell']);
   assert.deepEqual(analyze({ lowF: 60.1 }).eligible.outerwear, []);
@@ -65,11 +65,11 @@ test('snow-only suppresses umbrella; mixed rain/snow and freezing rain remain we
   }
 });
 
-test('hot afternoon/cold night uses light top, full pants, coat, sun hat, and independent reminders', () => {
+test('hot afternoon/cold night uses daytime garments, a light layer, and independent reminders', () => {
   const facts = analyze({ highF: 90, lowF: 40, shortForecast: 'Sunny' });
-  assert.deepEqual(facts.eligible.top, ['tee', 'longsleeve']);
-  assert.deepEqual(facts.eligible.bottom, ['chinos', 'joggers']);
-  assert.deepEqual(facts.eligible.outerwear, ['coat']);
+  assert.deepEqual(facts.eligible.top, ['tee']);
+  assert.deepEqual(facts.eligible.bottom, ['shorts', 'chinos', 'joggers']);
+  assert.deepEqual(facts.eligible.outerwear, ['shell']);
   assert.deepEqual(facts.eligible.accessory, ['sunhat']);
   assert.equal(facts.situation, 'hot');
   assert.equal(facts.active.cold, true);
@@ -111,7 +111,7 @@ test('13 source garments; independent palettes add three choices to every visibl
   }, {}), { top: 3, bottom: 3, footwear: 3, outerwear: 2, accessory: 2 });
 });
 
-test('weather grid proves at least four garment combinations for every forecast, excluding colors', () => {
+test('weather grid proves at least three garment combinations for every forecast, excluding colors', () => {
   let forecasts = 0;
   for (const highF of [20, 40, 45, 50, 60, 69.9, 70, 84.9, 85, 95]) {
     for (const lowF of [20, 45, 45.1, 60, 60.1, 70].filter((low) => low <= highF)) {
@@ -124,8 +124,8 @@ test('weather grid proves at least four garment combinations for every forecast,
               outfits.add(`${top}/${bottom}/${facts.eligible.footwear[0]}`);
             }
             assert.ok(outfits.size >= 3);
-            assert.ok(countGarmentCombinations(facts.eligible) >= 4);
-            if (facts.active.cold) assert.ok(!facts.eligible.bottom.includes('shorts'));
+            assert.ok(countGarmentCombinations(facts.eligible) >= 3);
+            if (facts.highF < 70 || facts.condition === 'snow') assert.ok(!facts.eligible.bottom.includes('shorts'));
             if (facts.condition === 'snow') assert.deepEqual(facts.eligible.footwear, ['winterboots']);
             forecasts++;
           }
@@ -133,7 +133,7 @@ test('weather grid proves at least four garment combinations for every forecast,
       }
     }
   }
-  console.log(`Combination/eligibility grid: ${forecasts} forecasts passed (minimum four garment combinations).`);
+  console.log(`Combination/eligibility grid: ${forecasts} forecasts passed (minimum three garment combinations).`);
 });
 
 test('selection can produce all four snow outfits without color changes', () => {
@@ -154,7 +154,7 @@ test('each garment, color, headline, and reminder gets its own random choice', (
   const state = make({ shortForecast: 'Sunny' }, { random: () => rolls.shift() ?? 0 });
   assert.equal(state.outfit.top.itemId, 'tee');
   assert.equal(state.outfit.top.colorIndex, 2);
-  assert.equal(state.outfit.bottom.itemId, 'chinos');
+  assert.equal(state.outfit.bottom.itemId, 'joggers');
   assert.equal(state.outfit.bottom.colorIndex, 0);
   assert.equal(state.outfit.footwear.colorIndex, 1);
   assert.equal(state.outfit.accessory.colorIndex, 2);
@@ -202,4 +202,21 @@ test('broken/denied storage and malformed saved values recover without crashing'
 test('missing/reversed temperatures are rejected instead of inventing recommendations', () => {
   assert.throws(() => analyze({ highF: null }), /usable forecast/);
   assert.throws(() => analyze({ lowF: 80 }), /usable forecast/);
+});
+
+test('warm dry, rainy and windy days use tees and retain three actual outfits; saved long sleeves are replaced', () => {
+  for (const highF of [70, 75, 85, 95]) for (const patch of [{}, {shortForecast:'Rain',precipProbability:80}, {windSpeed:20}, {lowF:40}]) {
+    const forecast={...base,highF,...patch}; const facts=analyzeForecast(forecast);
+    assert.deepEqual(facts.eligible.top,['tee']);
+    assert.ok(countGarmentCombinations(facts.eligible)>=3);
+    assert.ok(!facts.eligible.footwear.includes('winterboots'));
+    assert.ok(!facts.eligible.outerwear.includes('coat'));
+    if(patch.shortForecast==='Rain') {assert.deepEqual(facts.eligible.footwear,['ankleboots']);assert.deepEqual(facts.eligible.outerwear,['shell']);}
+    if(patch.windSpeed===20) assert.deepEqual(facts.eligible.outerwear,['shell']);
+  }
+  const previous=make({highF:65,lowF:55},{random:()=>0});
+  const updated=make({}, {previous,random:()=>0});
+  assert.equal(updated.outfit.top.itemId,'tee');
+  const outfits=new Set([0,.4,.9].map(roll=>make({}, {random:()=>roll}).wearing.map(x=>x.itemId).join('/')));
+  assert.equal(outfits.size,3);
 });
